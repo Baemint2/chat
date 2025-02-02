@@ -1,0 +1,26 @@
+package com.moz1mozi.chat.entity
+
+import jakarta.persistence.*
+import org.springframework.data.annotation.LastModifiedDate
+import java.time.LocalDateTime
+
+@Entity
+class User(
+    @Column(unique = true) var username: String,
+    var password: String,
+    var nickname: String? = null,
+) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    val id: Long? = null
+
+    @OneToMany(mappedBy = "user")
+    val chatMessage: MutableList<ChatMessage> = mutableListOf()
+
+    @Column(updatable = false)
+    val createdAt: LocalDateTime = LocalDateTime.now()
+
+    @LastModifiedDate
+    var updatedAt: LocalDateTime? = null
+}

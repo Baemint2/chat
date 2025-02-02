@@ -1,0 +1,15 @@
+spring:
+  application:
+     name: chat
+  datasource:
+    url: jdbc:mysql://localhost:3306/moz1mozi
+    username: moz1mozi
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+logging:
+  level:
+    root: info

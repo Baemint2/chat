@@ -11,11 +11,12 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.bean.override.mockito.MockitoBean
+import java.util.*
 
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class UserRepositoryTest(
+class UserRepositoryTest constructor(
     @Autowired val userRepository: UserRepository,
 ) {
     @MockitoBean private lateinit var passwordEncoder: PasswordEncoder
@@ -27,7 +28,7 @@ class UserRepositoryTest(
         `when`(passwordEncoder.encode(anyString())).thenReturn("encodedPassword")
         val saveUser = userRepository.save(
             User(
-                username = "testUser2",
+                username = UUID.randomUUID().toString(),
                 password = passwordEncoder.encode("1234"),
                 nickname = "testNickname2",
             )

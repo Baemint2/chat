@@ -13,7 +13,7 @@ class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    val id: Long? = null
+    var id: Long? = null
 
     @OneToMany(mappedBy = "user")
     val chatMessage: MutableList<ChatMessage> = mutableListOf()

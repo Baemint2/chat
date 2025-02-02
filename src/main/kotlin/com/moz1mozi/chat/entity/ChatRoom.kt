@@ -13,8 +13,14 @@ class ChatRoom(
 
     @OneToMany(mappedBy = "chatRoom")
     val chatMessage: MutableList<ChatMessage> = mutableListOf(),
+
+    @OneToMany(mappedBy = "chatUserPk.chatRoom", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val chatRoomMng: MutableList<ChatRoomMng> = mutableListOf()
+
 ): BaseEntity() {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chat_room_id")
-    val id: Long? = null
+    var id: Long? = null
+
 }

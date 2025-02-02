@@ -33,7 +33,7 @@ class UserServiceTest @Autowired constructor(
  @BeforeEach
  fun setup() {
   user = User(
-   username = "testUser",
+   username = "testUsername",
    password = passwordEncoder.encode("1234"),
    nickname = "testNickname",
   )

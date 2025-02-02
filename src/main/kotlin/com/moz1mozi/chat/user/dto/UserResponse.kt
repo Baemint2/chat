@@ -13,6 +13,14 @@ class UserResponse(
         }
     }
 
+    fun toEntity(): User {
+        return User(
+            username = this.username,
+            password = this.password,
+            nickname = this.nickname
+        )
+    }
+
     override fun toString(): String {
         return "UserResponse(username='$username', password='$password', nickname='$nickname')"
     }

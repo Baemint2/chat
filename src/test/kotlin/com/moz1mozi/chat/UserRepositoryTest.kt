@@ -27,9 +27,9 @@ class UserRepositoryTest(
         `when`(passwordEncoder.encode(anyString())).thenReturn("encodedPassword")
         val saveUser = userRepository.save(
             User(
-                username = "testUser",
+                username = "testUser2",
                 password = passwordEncoder.encode("1234"),
-                nickname = "testNickname",
+                nickname = "testNickname2",
             )
         )
         logger.info { "testUser created, password: ${saveUser.password}" }

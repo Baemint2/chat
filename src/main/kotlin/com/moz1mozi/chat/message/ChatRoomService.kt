@@ -1,14 +1,13 @@
 package com.moz1mozi.chat.message
 
-import com.moz1mozi.chat.entity.ChatRoom
 import com.moz1mozi.chat.entity.ChatRoomMng
 import com.moz1mozi.chat.entity.ChatUserPK
+import com.moz1mozi.chat.message.dto.ChatRoomRequest
 import com.moz1mozi.chat.message.dto.ChatRoomResponse
-import com.moz1mozi.chat.message.repository.ChatMessageRepository
+import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
 import com.moz1mozi.chat.message.repository.ChatRoomMngRepository
 import com.moz1mozi.chat.message.repository.ChatRoomRepository
 import com.moz1mozi.chat.user.UserService
-import com.moz1mozi.chat.user.dto.UserResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -20,9 +19,10 @@ class ChatRoomService(
 ) {
 
     @Transactional
-    fun createChatRoom(chatRoom: ChatRoom): ChatRoom {
-
-        return chatRoomRepository.save(chatRoom)
+    fun createChatRoom(chatRoom: ChatRoomRequest, username: String): ChatRoomResponse {
+        chatRoom.creator = username;
+        val savedChatRoom = chatRoomRepository.save(chatRoom.toEntity())
+        return ChatRoomResponse.from(savedChatRoom)
     }
 
     @Transactional
@@ -35,7 +35,7 @@ class ChatRoomService(
     }
 
     @Transactional
-    fun getChatRoom(username: String): List<ChatRoomResponse> {
+    fun getChatRoom(username: String): List<ChatRoomSearchResponse> {
         return chatRoomRepository.selectChatRoom(username)
     }
 }

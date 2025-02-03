@@ -1,14 +1,11 @@
 package com.moz1mozi.chat.message.repository.impl
 
-import com.moz1mozi.chat.entity.ChatRoom
 import com.moz1mozi.chat.entity.QChatRoom.chatRoom
 import com.moz1mozi.chat.entity.QChatRoomMng.chatRoomMng
-import com.moz1mozi.chat.entity.QUser
 import com.moz1mozi.chat.entity.QUser.user
 import com.moz1mozi.chat.entity.Status
-import com.moz1mozi.chat.message.dto.ChatRoomResponse
+import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
 import com.moz1mozi.chat.message.repository.ChatRoomCustomRepository
-import com.querydsl.core.Tuple
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager
 import com.querydsl.core.types.dsl.Expressions
@@ -18,7 +15,7 @@ class ChatRoomCustomRepositoryImpl (
     entityManager: EntityManager
 ): ChatRoomCustomRepository {
     private val queryFactory: JPAQueryFactory = JPAQueryFactory(entityManager)
-    override fun selectChatRoom(username: String): List<ChatRoomResponse> {
+    override fun selectChatRoom(username: String): List<ChatRoomSearchResponse> {
         val groupConcat = Expressions.stringTemplate(
             "GROUP_CONCAT({0} ORDER BY {0} SEPARATOR ', ')", user.username
         )
@@ -46,7 +43,7 @@ class ChatRoomCustomRepositoryImpl (
             .groupBy(chatRoom.id)
             .fetch()
         return results.map { tuple ->
-            ChatRoomResponse(
+            ChatRoomSearchResponse(
                 chatRoomId = tuple.get(chatRoom.id)!!,
                 chatRoomTitle = tuple.get(chatRoom.chatRoomTitle)!!,
                 creator = tuple.get(chatRoom.creator)!!,

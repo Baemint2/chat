@@ -1,16 +1,25 @@
 package com.moz1mozi.chat.message.dto
 
-import java.time.LocalDateTime
+import com.moz1mozi.chat.entity.ChatRoom
 
 class ChatRoomResponse(
-    val chatRoomId: Long,
-    val chatRoomTitle: String,
-    val creator: String,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
-    val participantUsers: String,
+    val id: Long? = null,
+    val chatRoomTitle: String? = null,
+    val creator: String? = null,
 ) {
-    override fun toString(): String {
-        return "ChatRoomResponse(chatRoomId=$chatRoomId, chatRoomTitle='$chatRoomTitle', creator='$creator', createdAt=$createdAt, updatedAt=$updatedAt, participantUsers='$participantUsers')"
+    companion object {
+        fun from(chatRoom: ChatRoom): ChatRoomResponse {
+            return ChatRoomResponse(
+                id = chatRoom.id,
+                chatRoomTitle = chatRoom.chatRoomTitle,
+                creator = chatRoom.creator
+            )
+        }
+    }
+
+    fun toEntity(): ChatRoom {
+        return ChatRoom(
+            chatRoomTitle = this.chatRoomTitle,
+        )
     }
 }

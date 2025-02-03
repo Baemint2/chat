@@ -5,7 +5,7 @@ import com.moz1mozi.chat.entity.QChatRoom.chatRoom
 import com.moz1mozi.chat.entity.QChatRoomMng.chatRoomMng
 import com.moz1mozi.chat.entity.QUser.user
 import com.moz1mozi.chat.entity.Status
-import com.moz1mozi.chat.message.dto.ChatRoomResponse
+import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
 import com.moz1mozi.chat.message.repository.ChatRoomMngRepository
 import com.moz1mozi.chat.message.repository.ChatRoomRepository
 import com.moz1mozi.chat.user.repository.UserRepository
@@ -40,7 +40,7 @@ class ChatRoomRepositoryTest(
         val chatRoom = ChatRoom(chatRoomTitle = "테스트 채팅방").apply {
             creator = "testUsername"
         }
-        chatRoomRepository.save(chatRoom)
+
         logger.info { "채팅방 생성: ${chatRoom.id}, ${chatRoom.chatRoomTitle}, ${chatRoom.chatRoomStat}, ${chatRoom.creator}, ${chatRoom.chatRoomMng}" }
     }
 
@@ -75,7 +75,7 @@ class ChatRoomRepositoryTest(
             .groupBy(chatRoom.id)
             .fetch()
         results.map { tuple ->
-            ChatRoomResponse(
+            ChatRoomSearchResponse(
                 chatRoomId = tuple.get(chatRoom.id)!!,
                 chatRoomTitle = tuple.get(chatRoom.chatRoomTitle)!!,
                 creator = tuple.get(chatRoom.creator)!!,

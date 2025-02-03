@@ -4,7 +4,8 @@ import com.moz1mozi.chat.entity.ChatRoom
 import com.moz1mozi.chat.entity.ChatRoomMng
 import com.moz1mozi.chat.entity.ChatUserPK
 import com.moz1mozi.chat.entity.User
-import com.moz1mozi.chat.message.dto.ChatRoomResponse
+import com.moz1mozi.chat.message.dto.ChatRoomRequest
+import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
 import com.moz1mozi.chat.message.repository.ChatRoomMngRepository
 import com.moz1mozi.chat.message.repository.ChatRoomRepository
 import com.moz1mozi.chat.user.UserService
@@ -42,10 +43,10 @@ class ChatRoomServiceTest @Autowired constructor(
  lateinit var user2: User
  lateinit var userResponse: UserResponse
  lateinit var chatRoomMng: ChatRoomMng
- lateinit var chatRoomResponse: ChatRoomResponse
- lateinit var chatRoomResponse2: ChatRoomResponse
+ lateinit var chatRoomSearchResponse: ChatRoomSearchResponse
+ lateinit var chatRoomSearchResponse2: ChatRoomSearchResponse
  var chatRooms: MutableList<ChatRoom> = mutableListOf()
- var chatRoomResponses: MutableList<ChatRoomResponse> = mutableListOf()
+ var chatRoomSearchRespons: MutableList<ChatRoomSearchResponse> = mutableListOf()
  @BeforeEach
  fun setUp() {
 
@@ -86,7 +87,7 @@ class ChatRoomServiceTest @Autowired constructor(
   val chatUserPk = ChatUserPK(chatRoom, user)
   chatRoomMng = ChatRoomMng(chatUserPk = chatUserPk)
 
-  chatRoomResponse = ChatRoomResponse(
+  chatRoomSearchResponse = ChatRoomSearchResponse(
    chatRoomId = 99L,
    chatRoomTitle = "테스트 채팅방1",
    creator = "testUser1",
@@ -95,7 +96,7 @@ class ChatRoomServiceTest @Autowired constructor(
    participantUsers = "testUser1",
   )
 
-  chatRoomResponse2 = ChatRoomResponse(
+  chatRoomSearchResponse2 = ChatRoomSearchResponse(
    chatRoomId = 100L,
    chatRoomTitle = "테스트 채팅방2",
    creator = "testUser1",
@@ -104,17 +105,18 @@ class ChatRoomServiceTest @Autowired constructor(
    participantUsers = "testUser1, testUser2",
   )
 
-  chatRoomResponses.add(chatRoomResponse)
-  chatRoomResponses.add(chatRoomResponse2)
+  chatRoomSearchRespons.add(chatRoomSearchResponse)
+  chatRoomSearchRespons.add(chatRoomSearchResponse2)
 
  }
 
 @Test
 @DisplayName("채팅방을 생성한다.")
  fun 채팅방_생성() {
-  `when`(chatRoomRepository.save(any())).thenReturn(chatRoom)
-  val createChatRoom = chatRoomService.createChatRoom(chatRoom)
+  `when`(chatRoomRepository.save(any<ChatRoom>())).thenReturn(chatRoom)
+  val createChatRoom = chatRoomService.createChatRoom(ChatRoomRequest.of(chatRoom), "testUser")
   assertEquals(chatRoom.id, createChatRoom.id)
+  logger.info { "${createChatRoom.id}, ${createChatRoom.chatRoomTitle}, ${createChatRoom.creator}" }
 }
 
  @Test
@@ -134,7 +136,7 @@ class ChatRoomServiceTest @Autowired constructor(
  @DisplayName("특정 유저의 활성화된 채팅방 목록을 조회한다.")
  fun 채팅방_목록_조회() {
   `when`(userRepository.findByUsername("testUsername")).thenReturn(user)
-  `when`(chatRoomRepository.selectChatRoom("testUsername")).thenReturn(chatRoomResponses)
+  `when`(chatRoomRepository.selectChatRoom("testUsername")).thenReturn(chatRoomSearchRespons)
   `when`(userService.findUser(anyString())).thenReturn(userResponse)
   val chatRooms = chatRoomService.getChatRoom("testUsername")
 

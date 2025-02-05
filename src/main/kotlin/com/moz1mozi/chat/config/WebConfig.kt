@@ -14,6 +14,7 @@ class WebConfig {
                 registry.addMapping("/**")
                     .allowedOrigins("http://localhost:3000")
                     .allowedMethods("GET", "POST", "PUT", "DELETE")
+                    .allowedHeaders("Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Content-Type", "x-www-form-urlencoded")
                     .allowCredentials(true)
             }
         }

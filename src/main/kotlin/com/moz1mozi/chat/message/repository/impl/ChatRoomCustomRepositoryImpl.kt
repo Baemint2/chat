@@ -17,7 +17,7 @@ class ChatRoomCustomRepositoryImpl (
     private val queryFactory: JPAQueryFactory = JPAQueryFactory(entityManager)
     override fun selectChatRoom(username: String): List<ChatRoomSearchResponse> {
         val groupConcat = Expressions.stringTemplate(
-            "GROUP_CONCAT({0} ORDER BY {0} SEPARATOR ', ')", user.username
+            "GROUP_CONCAT({0})", user.username
         )
 
         val subQuery = JPAExpressions
@@ -37,6 +37,7 @@ class ChatRoomCustomRepositoryImpl (
             .join(chatRoomMng)
             .on(chatRoom.id.eq(chatRoomMng.chatUserPk.chatRoom.id))
             .join(user)
+            .on(chatRoomMng.chatUserPk.user.id.eq(user.id))
             .where(chatRoomMng.entryStat.eq(Status.ENABLED)
                  , chatRoom.chatRoomStat.eq(Status.ENABLED)
                  , chatRoom.id.`in`(subQuery))

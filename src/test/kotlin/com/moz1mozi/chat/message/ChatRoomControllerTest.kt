@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.moz1mozi.chat.entity.ChatRoom
 import com.moz1mozi.chat.message.dto.ChatRoomRequest
 import com.moz1mozi.chat.message.dto.ChatRoomResponse
+import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
 import com.moz1mozi.chat.message.repository.ChatRoomMngRepository
 import com.moz1mozi.chat.message.repository.ChatRoomRepository
 import com.moz1mozi.chat.user.UserService
@@ -15,6 +16,7 @@ import org.mockito.InjectMocks
 import org.mockito.Mockito.any
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext
 import org.springframework.http.MediaType
@@ -23,26 +25,29 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
+import java.time.LocalDateTime
 
 @SpringBootTest
+@AutoConfigureMockMvc
 @MockitoBean(types = [JpaMetamodelMappingContext::class])
 class ChatRoomControllerTest @Autowired constructor(
- @InjectMocks val chatRoomService: ChatRoomService,
- @MockitoBean val chatRoomRepository: ChatRoomRepository,
+ @InjectMocks private val chatRoomService: ChatRoomService,
+ @MockitoBean private val chatRoomRepository: ChatRoomRepository,
  @MockitoBean val userRepository: UserRepository,
  @MockitoBean val userService: UserService,
  @MockitoBean val chatRoomMngRepository: ChatRoomMngRepository,
 ) {
- var logger = KotlinLogging.logger {}
 
  @Autowired
  private lateinit var objectMapper: ObjectMapper
 
+ var logger = KotlinLogging.logger {}
  lateinit var mockMvc: MockMvc
  lateinit var chatRoom: ChatRoom
 
@@ -52,6 +57,7 @@ class ChatRoomControllerTest @Autowired constructor(
   this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
    .apply<DefaultMockMvcBuilder>(SecurityMockMvcConfigurers.springSecurity())
    .build()
+
   chatRoom = ChatRoom(
    chatRoomTitle = "테스트 채팅방"
   ).apply {
@@ -75,4 +81,27 @@ class ChatRoomControllerTest @Autowired constructor(
     .andExpect(status().isOk)
     .andDo { result -> logger.info {result.response.contentAsString} }
   }
+
+ @Test
+ fun 채팅방조회() {
+  logger.info { "테스트 시작" }
+
+  val chatRoomSearchResponse = ChatRoomSearchResponse(
+   chatRoomId = 99L,
+   chatRoomTitle = "채팅방",
+   creator = "testUser",
+   createdAt = LocalDateTime.now(),
+   updatedAt = LocalDateTime.now(),
+   participantUsers = "testUser"
+  )
+
+  val mutableListOf = mutableListOf(chatRoomSearchResponse)
+  `when`(chatRoomService.getChatRoom("testUser")).thenReturn(mutableListOf)
+
+  mockMvc.perform(get("/chatRoom/{username}", "testUser")
+   .with(csrf())
+   .contentType(MediaType.APPLICATION_JSON))
+   .andExpect(status().isOk)
+   .andDo { result -> logger.info { "Found ChatRoom: ${result.response.contentAsString}" } }
+ }
 }

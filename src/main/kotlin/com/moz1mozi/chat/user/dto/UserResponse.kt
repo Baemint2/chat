@@ -5,7 +5,7 @@ import com.moz1mozi.chat.entity.User
 class UserResponse(
     val username: String,
     val password: String,
-    private val nickname: String? = null,
+    val nickname: String? = null,
 ) {
     companion object {
         fun of(user: User): UserResponse {

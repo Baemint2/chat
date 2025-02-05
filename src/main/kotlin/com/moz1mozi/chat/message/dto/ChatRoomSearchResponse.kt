@@ -6,8 +6,8 @@ class ChatRoomSearchResponse(
     val chatRoomId: Long,
     val chatRoomTitle: String,
     val creator: String,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
+    val createdAt: LocalDateTime? = null,
+    val updatedAt: LocalDateTime? = null,
     val participantUsers: String,
 ) {
     override fun toString(): String {

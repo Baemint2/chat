@@ -37,4 +37,16 @@ class UserService(
         return UserResponse.of(user)
     }
 
+    @Transactional
+    fun findAllUsers(): List<UserResponse> {
+        val users = userRepository.findAll()
+        return users.map { UserResponse.of(it) }
+    }
+
+    @Transactional
+    fun searchUsers(username: String): List<UserResponse> {
+        val searchUsers = userRepository.searchUsers(username)
+        return searchUsers.map { UserResponse.of(it) }
+    }
+
 }

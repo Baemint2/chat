@@ -36,4 +36,18 @@ class UserRepositoryTest constructor(
         logger.info { "testUser created, password: ${saveUser.password}" }
     }
 
+    @Test
+    fun findUserList() {
+        val findAll = userRepository.findAll()
+        logger.info { "findAll users: ${findAll.size}" }
+    }
+
+    @Test
+    fun searchUserList() {
+        val searchUsers = userRepository.searchUsers("m")
+        for (searchUser in searchUsers) {
+            logger.info { searchUser.username }
+        }
+    }
+
 }

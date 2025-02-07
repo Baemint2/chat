@@ -30,6 +30,9 @@ class UserServiceTest @Autowired constructor(
  private val logger = KotlinLogging.logger {}
 
  lateinit var user: User
+ lateinit var user2: User
+ lateinit var user3: User
+ val userList: MutableList<User> = mutableListOf()
  @BeforeEach
  fun setup() {
   user = User(
@@ -37,6 +40,22 @@ class UserServiceTest @Autowired constructor(
    password = passwordEncoder.encode("1234"),
    nickname = "testNickname",
   )
+
+  user2 = User(
+   username = "testUsername2",
+   password = passwordEncoder.encode("1234"),
+   nickname = "testNickname2",
+  )
+
+  user3 = User(
+   username = "moz1mozi",
+   password = passwordEncoder.encode("1234"),
+   nickname = "testNickname3",
+  )
+
+  userList.add(user)
+  userList.add(user2)
+  userList.add(user3)
  }
 
   @Test
@@ -80,6 +99,23 @@ class UserServiceTest @Autowired constructor(
    userService.findUser(user.username)
   }
   logger.info { exception.message }
+ }
+
+ @Test
+ @DisplayName("전체 유저리스트 조회하기")
+ fun 유저전체조회() {
+  `when`(userRepository.findAll()).thenReturn(userList)
+  val findAllUsers = userService.findAllUsers()
+  findAllUsers.forEach { user -> logger.info { user.username }}
+ }
+
+ @Test
+ @DisplayName("특정 텍스트에 맞는 유저리스트 조회하기")
+ fun 텍스트로유저조회() {
+  `when`(userRepository.searchUsers("t")).thenReturn(userList)
+  val searchUsers = userService.searchUsers("t")
+  searchUsers.forEach { user -> logger.info { user.username } }
+
  }
 
 }

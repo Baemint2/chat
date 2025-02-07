@@ -21,4 +21,17 @@ class UserController(
         logger.info { "Found user: $findUser" }
         return ResponseEntity.ok("userInfo" to findUser)
     }
+
+    @GetMapping("/users")
+    fun getUsers(): ResponseEntity<Map<String, List<UserResponse>>> {
+        val findAllUsers = userService.findAllUsers()
+        return ResponseEntity.ok(mapOf("users" to findAllUsers))
+    }
+
+    @GetMapping("/users/{searchText}")
+    fun searchUsers(@PathVariable searchText: String): ResponseEntity<List<UserResponse>> {
+        return ResponseEntity.ok(userService.searchUsers(searchText))
+    }
+
+
 }

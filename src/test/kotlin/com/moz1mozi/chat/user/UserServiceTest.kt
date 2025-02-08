@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.mockito.ArgumentMatchers.any
 import org.mockito.InjectMocks
+import org.mockito.Mockito.anyLong
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -102,10 +103,10 @@ class UserServiceTest @Autowired constructor(
  }
 
  @Test
- @DisplayName("전체 유저리스트 조회하기")
+ @DisplayName("로그인한 본인을 제외한 전체 유저리스트 조회하기")
  fun 유저전체조회() {
   `when`(userRepository.findAll()).thenReturn(userList)
-  val findAllUsers = userService.findAllUsers()
+  val findAllUsers = userService.findAllUsers(user.username)
   findAllUsers.forEach { user -> logger.info { user.username }}
  }
 
@@ -115,6 +116,15 @@ class UserServiceTest @Autowired constructor(
   `when`(userRepository.searchUsers("t")).thenReturn(userList)
   val searchUsers = userService.searchUsers("t")
   searchUsers.forEach { user -> logger.info { user.username } }
+
+ }
+
+ @Test
+ @DisplayName("채팅방에 속해있는 유저를 제외하고 조회")
+ fun findUsersNotInChatRoom() {
+  `when`(userRepository.selectUsersNotInChatRoom(anyLong())).thenReturn(listOf(user, user2))
+  val findUsersNotInChatRoom = userService.findUsersNotInChatRoom(35L)
+  logger.info { "findUsersNotInChatRoom: $findUsersNotInChatRoom" }
 
  }
 

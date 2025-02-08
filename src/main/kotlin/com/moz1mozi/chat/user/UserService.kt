@@ -38,9 +38,23 @@ class UserService(
     }
 
     @Transactional
-    fun findAllUsers(): List<UserResponse> {
-        val users = userRepository.findAll()
+    fun findUserByNickname(nickname: String): UserResponse? {
+        val user = userRepository.findByNickname(nickname)
+        requireNotNull(user) { "Username not found" }
+        return UserResponse.of(user)
+    }
+
+    @Transactional
+    fun findAllUsers(username: String): List<UserResponse> {
+        val users = userRepository.findAllByUsernameIsNot(username)
         return users.map { UserResponse.of(it) }
+    }
+
+
+    @Transactional
+    fun findUsersNotInChatRoom(chatRoomId: Long): List<UserResponse> {
+        val chatRoom = userRepository.selectUsersNotInChatRoom(chatRoomId)
+        return chatRoom.map { UserResponse.of(it) }
     }
 
     @Transactional

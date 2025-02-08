@@ -43,18 +43,21 @@ class UserControllerTest @Autowired constructor(
    .build()
 
   user = UserResponse(
-   username = "testUsername",
-   password = passwordEncoder.encode("1234"),
-   nickname = "testNickname",
+      id = null,
+      username = "testUsername",
+      password = passwordEncoder.encode("1234"),
+      nickname = "testNickname",
   )
 
   user2 = UserResponse(
+   id = null,
    username = "testUsername2",
    password = passwordEncoder.encode("1234"),
    nickname = "testNickname2",
   )
 
   user3 = UserResponse(
+   id = null,
    username = "moz1mozi",
    password = passwordEncoder.encode("1234"),
    nickname = "testNickname3",
@@ -67,7 +70,7 @@ class UserControllerTest @Autowired constructor(
 
  @Test
  fun getUser() {
-  `when`(userService.findUser(anyString())).thenReturn(UserResponse(username = "testUser", password = "testPassword", nickname = "testNickname"))
+  `when`(userService.findUser(anyString())).thenReturn(UserResponse(id = 100L, username = "testUser", password = "testPassword", nickname = "testNickname"))
   mockMvc.perform(get("/userInfo/{username}", "testUser")
    .with(csrf())
    .contentType(MediaType.APPLICATION_JSON))
@@ -76,7 +79,7 @@ class UserControllerTest @Autowired constructor(
 
  @Test
  fun getUsers() {
-  `when`(userService.findAllUsers()).thenReturn((userList))
+  `when`(userService.findAllUsers(anyString())).thenReturn((userList))
   mockMvc.perform(get("/users")
    .with(csrf())
    .contentType(MediaType.APPLICATION_JSON))

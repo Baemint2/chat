@@ -148,7 +148,7 @@ class ChatRoomServiceTest @Autowired constructor(
   `when`(userRepository.findByUsername("testUsername")).thenReturn(user)
   `when`(chatRoomRepository.selectChatRoom("testUsername")).thenReturn(chatRoomSearchRespons)
   `when`(userService.findUser(anyString())).thenReturn(userResponse)
-  val chatRooms = chatRoomService.getChatRoom("testUsername")
+  val chatRooms = chatRoomService.findChatRoomByUsername("testUsername")
 
   chatRooms.forEach { chatRoom ->
    logger.info { "chatRoom: $chatRoom" }

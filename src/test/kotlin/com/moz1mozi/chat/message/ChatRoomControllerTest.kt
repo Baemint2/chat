@@ -97,7 +97,7 @@ class ChatRoomControllerTest @Autowired constructor(
   )
 
   val mutableListOf = mutableListOf(chatRoomSearchResponse)
-  `when`(chatRoomService.getChatRoom("testUser")).thenReturn(mutableListOf)
+  `when`(chatRoomService.findChatRoomByUsername("testUser")).thenReturn(mutableListOf)
 
   mockMvc.perform(get("/chatRoom/{username}", "testUser")
    .with(csrf())

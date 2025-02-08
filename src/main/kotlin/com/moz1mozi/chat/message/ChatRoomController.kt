@@ -1,11 +1,9 @@
 package com.moz1mozi.chat.message
 
 import com.moz1mozi.chat.message.dto.ChatRoomRequest
-import com.moz1mozi.chat.message.dto.ChatRoomResponse
 import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -31,7 +29,7 @@ class ChatRoomController(
     // 현재 로그인한 유저가 속해있는 채팅방 조회
     @GetMapping("/chatRoom/{username}")
     fun getChatRoom(@PathVariable username: String): ResponseEntity<Map<String, List<ChatRoomSearchResponse>>> {
-        val chatRoom = chatRoomService.getChatRoom(username)
+        val chatRoom = chatRoomService.findChatRoomByUsername(username)
         return ResponseEntity.ok().body(mapOf("chatRoom" to chatRoom))
     }
 }

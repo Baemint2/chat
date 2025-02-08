@@ -1,7 +1,7 @@
 package com.moz1mozi.chat.config
 
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import com.moz1mozi.chat.message.dto.ChatMessageResponse
+import com.moz1mozi.chat.message.dto.ChatMessageRequest
 import org.apache.kafka.clients.admin.AdminClientConfig
 import org.apache.kafka.clients.admin.NewTopic
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -42,7 +42,7 @@ class KafkaConfig {
     }
 
     @Bean
-    fun producerFactory(): ProducerFactory<String, ChatMessageResponse> {
+    fun producerFactory(): ProducerFactory<String, ChatMessageRequest> {
         val configProps: MutableMap<String, Any?> = HashMap()
         configProps[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapAddress
         configProps[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
@@ -51,12 +51,12 @@ class KafkaConfig {
     }
 
     @Bean
-    fun kafkaTemplate(): KafkaTemplate<String, ChatMessageResponse> {
+    fun kafkaTemplate(): KafkaTemplate<String, ChatMessageRequest> {
         return KafkaTemplate(producerFactory())
     }
 
     @Bean
-    fun consumerFactory(): ConsumerFactory<String, ChatMessageResponse> {
+    fun consumerFactory(): ConsumerFactory<String, ChatMessageRequest> {
         val props: MutableMap<String, Any?> = HashMap()
         props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapAddress
         props[ConsumerConfig.GROUP_ID_CONFIG] = groupId
@@ -67,8 +67,8 @@ class KafkaConfig {
     }
 
     @Bean
-    fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, ChatMessageResponse> {
-        val factory: ConcurrentKafkaListenerContainerFactory<String, ChatMessageResponse> =
+    fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, ChatMessageRequest> {
+        val factory: ConcurrentKafkaListenerContainerFactory<String, ChatMessageRequest> =
             ConcurrentKafkaListenerContainerFactory()
         factory.consumerFactory = consumerFactory()
         return factory

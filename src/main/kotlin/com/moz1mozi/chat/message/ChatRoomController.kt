@@ -20,12 +20,15 @@ class ChatRoomController(
     private val logger = KotlinLogging.logger { }
 
     @PostMapping("/chatRoom")
-    fun createChatRoom(@RequestBody chatRoom: ChatRoomRequest): ResponseEntity<Map<String, Any>> {
-        val getUsername = SecurityContextHolder.getContext().authentication.name
-        val createChatRoom = chatRoomService.createChatRoom(chatRoom, getUsername)
+    fun createChatRoom(@RequestBody chatRoom: ChatRoomRequest): ResponseEntity<Map<String, Any?>> {
+        val createChatRoom = chatRoom.creator?.let {
+            chatRoomService.createChatRoom(chatRoom,
+                it, chatRoom.usernameList)
+        }
         return ResponseEntity.ok().body(mapOf("message" to "채팅방이 생성되었습니다.", "chatRoom" to createChatRoom))
     }
 
+    // 현재 로그인한 유저가 속해있는 채팅방 조회
     @GetMapping("/chatRoom/{username}")
     fun getChatRoom(@PathVariable username: String): ResponseEntity<Map<String, List<ChatRoomSearchResponse>>> {
         val chatRoom = chatRoomService.getChatRoom(username)

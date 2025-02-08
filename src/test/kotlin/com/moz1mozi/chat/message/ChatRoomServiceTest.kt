@@ -9,6 +9,7 @@ import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
 import com.moz1mozi.chat.message.repository.ChatRoomMngRepository
 import com.moz1mozi.chat.message.repository.ChatRoomRepository
 import com.moz1mozi.chat.user.UserService
+import com.moz1mozi.chat.user.dto.UserInfo
 import com.moz1mozi.chat.user.dto.UserResponse
 import com.moz1mozi.chat.user.repository.UserRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -42,11 +43,13 @@ class ChatRoomServiceTest @Autowired constructor(
  lateinit var user: User
  lateinit var user2: User
  lateinit var userResponse: UserResponse
+ lateinit var userResponse2: UserResponse
  lateinit var chatRoomMng: ChatRoomMng
  lateinit var chatRoomSearchResponse: ChatRoomSearchResponse
  lateinit var chatRoomSearchResponse2: ChatRoomSearchResponse
  var chatRooms: MutableList<ChatRoom> = mutableListOf()
  var chatRoomSearchRespons: MutableList<ChatRoomSearchResponse> = mutableListOf()
+ var participantUsers: List<String> = mutableListOf();
  @BeforeEach
  fun setUp() {
 
@@ -79,9 +82,16 @@ class ChatRoomServiceTest @Autowired constructor(
   ).apply { id = 100L }
 
   userResponse = UserResponse(
-   username = "testUsername",
+      id = null,
+      username = "testUsername",
+      password = passwordEncoder.encode("1234"),
+      nickname = "testNickname",
+  )
+  userResponse2 = UserResponse(
+   id = null,
+   username = "testUsername2",
    password = passwordEncoder.encode("1234"),
-   nickname = "testNickname",
+   nickname = "testNickname2",
   )
 
   val chatUserPk = ChatUserPK(chatRoom, user)
@@ -93,7 +103,7 @@ class ChatRoomServiceTest @Autowired constructor(
    creator = "testUser1",
    createdAt = LocalDateTime.now(),
    updatedAt = LocalDateTime.now(),
-   participantUsers = "testUser1",
+   participantUsers = listOf(UserInfo(user.username, user.nickname!!)),
   )
 
   chatRoomSearchResponse2 = ChatRoomSearchResponse(
@@ -102,7 +112,7 @@ class ChatRoomServiceTest @Autowired constructor(
    creator = "testUser1",
    createdAt = LocalDateTime.now(),
    updatedAt = LocalDateTime.now(),
-   participantUsers = "testUser1, testUser2",
+   participantUsers = listOf(UserInfo(user.username, user.nickname!!), UserInfo(user2.username, user2.nickname!!)),
   )
 
   chatRoomSearchRespons.add(chatRoomSearchResponse)
@@ -114,7 +124,7 @@ class ChatRoomServiceTest @Autowired constructor(
 @DisplayName("채팅방을 생성한다.")
  fun 채팅방_생성() {
   `when`(chatRoomRepository.save(any<ChatRoom>())).thenReturn(chatRoom)
-  val createChatRoom = chatRoomService.createChatRoom(ChatRoomRequest.of(chatRoom), "testUser")
+  val createChatRoom = chatRoomService.createChatRoom(ChatRoomRequest.of(chatRoom), "testUser", listOf("testUser", "testUser2"))
   assertEquals(chatRoom.id, createChatRoom.id)
   logger.info { "${createChatRoom.id}, ${createChatRoom.chatRoomTitle}, ${createChatRoom.creator}" }
 }

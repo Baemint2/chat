@@ -18,10 +18,21 @@ class ChatRoomService(
     private val userService: UserService,
 ) {
 
+    // 채팅방 생성
     @Transactional
-    fun createChatRoom(chatRoom: ChatRoomRequest, username: String): ChatRoomResponse {
-        chatRoom.creator = username;
+    fun createChatRoom(chatRoom: ChatRoomRequest, creator: String, usernameList: List<String>): ChatRoomResponse {
         val savedChatRoom = chatRoomRepository.save(chatRoom.toEntity())
+        savedChatRoom.creator = creator
+
+        val findChatRoom = chatRoomRepository.findById(savedChatRoom.id!!).orElseThrow()
+        val chatRoomMngList = usernameList.map { username ->
+            val findUser = userService.findUserByNickname(username) ?: throw IllegalArgumentException("User not found: $username")
+            val chatUserPK = ChatUserPK(chatRoom = findChatRoom, user = findUser.toEntity())
+            ChatRoomMng(chatUserPK)
+        }
+
+        chatRoomMngRepository.saveAll(chatRoomMngList)
+
         return ChatRoomResponse.from(savedChatRoom)
     }
 
@@ -34,8 +45,10 @@ class ChatRoomService(
         return chatRoomMngRepository.save(chatRoomMng)
     }
 
+    // 채팅방 조회
     @Transactional
     fun getChatRoom(username: String): List<ChatRoomSearchResponse> {
-        return chatRoomRepository.selectChatRoom(username)
+        val selectChatRoom = chatRoomRepository.selectChatRoom(username)
+        return selectChatRoom
     }
 }

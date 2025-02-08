@@ -8,6 +8,7 @@ import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
 import com.moz1mozi.chat.message.repository.ChatRoomMngRepository
 import com.moz1mozi.chat.message.repository.ChatRoomRepository
 import com.moz1mozi.chat.user.UserService
+import com.moz1mozi.chat.user.dto.UserInfo
 import com.moz1mozi.chat.user.repository.UserRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.junit.jupiter.api.BeforeEach
@@ -73,7 +74,7 @@ class ChatRoomControllerTest @Autowired constructor(
    val chatRoomRequest = ChatRoomRequest(chatRoomTitle = "기본 채팅방")
    val chatRoomEntity = ChatRoom(chatRoomTitle = "기본 채팅방").apply { creator = "testUser" }
    `when`(chatRoomRepository.save(any<ChatRoom>())).thenReturn(chatRoom)
-   `when`(chatRoomService.createChatRoom(chatRoomRequest, "testUser")).thenReturn(chatRoomResponse)
+   `when`(chatRoomService.createChatRoom(chatRoomRequest, "testUser", listOf("testUser1", "testUser2"))).thenReturn(chatRoomResponse)
    mockMvc.perform(post("/chatRoom")
     .with(csrf())
     .contentType(MediaType.APPLICATION_JSON)
@@ -92,7 +93,7 @@ class ChatRoomControllerTest @Autowired constructor(
    creator = "testUser",
    createdAt = LocalDateTime.now(),
    updatedAt = LocalDateTime.now(),
-   participantUsers = "testUser"
+   participantUsers = listOf(UserInfo("testUser", "testNickname"), UserInfo("testUser2", "testNickname2"))
   )
 
   val mutableListOf = mutableListOf(chatRoomSearchResponse)

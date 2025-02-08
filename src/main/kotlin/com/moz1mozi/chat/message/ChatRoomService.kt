@@ -1,5 +1,6 @@
 package com.moz1mozi.chat.message
 
+import com.moz1mozi.chat.entity.ChatRoom
 import com.moz1mozi.chat.entity.ChatRoomMng
 import com.moz1mozi.chat.entity.ChatUserPK
 import com.moz1mozi.chat.message.dto.ChatRoomRequest
@@ -45,10 +46,17 @@ class ChatRoomService(
         return chatRoomMngRepository.save(chatRoomMng)
     }
 
-    // 채팅방 조회
+    // 채팅방 상세 조회
     @Transactional
-    fun getChatRoom(username: String): List<ChatRoomSearchResponse> {
+    fun findChatRoomByUsername(username: String): List<ChatRoomSearchResponse> {
         val selectChatRoom = chatRoomRepository.selectChatRoom(username)
         return selectChatRoom
+    }
+
+    // 채팅방 조회
+    @Transactional
+    fun findChatRoom(chatRoomId: Long): ChatRoom {
+        val findById = chatRoomRepository.findById(chatRoomId).orElseThrow()
+        return findById
     }
 }

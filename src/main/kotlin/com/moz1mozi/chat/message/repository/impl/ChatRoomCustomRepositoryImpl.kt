@@ -6,6 +6,7 @@ import com.moz1mozi.chat.entity.QUser.user
 import com.moz1mozi.chat.entity.Status
 import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
 import com.moz1mozi.chat.message.repository.ChatRoomCustomRepository
+import com.moz1mozi.chat.user.dto.UserInfo
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager
 import com.querydsl.core.types.dsl.Expressions
@@ -44,13 +45,28 @@ class ChatRoomCustomRepositoryImpl (
             .groupBy(chatRoom.id)
             .fetch()
         return results.map { tuple ->
+            val usernames = tuple.get(groupConcat)?.split(",") ?: emptyList()
+
+            val userInfos = usernames.map { username ->
+                val userEntity = queryFactory
+                    .select(user)
+                    .from(user)
+                    .where(user.username.eq(username))
+                    .fetchOne()
+
+                UserInfo(
+                    username = userEntity?.username ?: "Unknown",
+                    nickname = userEntity?.nickname ?: "Unknown",
+                )
+            }
+
             ChatRoomSearchResponse(
                 chatRoomId = tuple.get(chatRoom.id)!!,
-                chatRoomTitle = tuple.get(chatRoom.chatRoomTitle)!!,
-                creator = tuple.get(chatRoom.creator)!!,
+                chatRoomTitle = tuple.get(chatRoom.chatRoomTitle),
+                creator = tuple.get(chatRoom.creator),
                 createdAt = tuple.get(chatRoom.createdAt)!!,
-                updatedAt = tuple.get(chatRoom.updatedAt)!!,
-                participantUsers = tuple.get(groupConcat)!!
+                updatedAt = tuple.get(chatRoom.updatedAt),
+                participantUsers = userInfos
             )
         }
     }

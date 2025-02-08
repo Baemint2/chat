@@ -8,6 +8,7 @@ import com.moz1mozi.chat.entity.Status
 import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
 import com.moz1mozi.chat.message.repository.ChatRoomMngRepository
 import com.moz1mozi.chat.message.repository.ChatRoomRepository
+import com.moz1mozi.chat.user.dto.UserInfo
 import com.moz1mozi.chat.user.repository.UserRepository
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.JPAExpressions
@@ -75,13 +76,28 @@ class ChatRoomRepositoryTest(
             .groupBy(chatRoom.id)
             .fetch()
         results.map { tuple ->
+            val usernames = tuple.get(groupConcat)?.split(",") ?: emptyList()
+
+            val userInfos = usernames.map { username ->
+                val userEntity = jpaQueryFactory
+                    .select(user)
+                    .from(user)
+                    .where(user.username.eq(username))
+                    .fetchOne()
+
+                UserInfo(
+                    username = userEntity?.username ?: "Unknown",
+                    nickname = userEntity?.nickname ?: "Unknown",
+                )
+            }
+
             ChatRoomSearchResponse(
                 chatRoomId = tuple.get(chatRoom.id)!!,
                 chatRoomTitle = tuple.get(chatRoom.chatRoomTitle)!!,
                 creator = tuple.get(chatRoom.creator)!!,
                 createdAt = tuple.get(chatRoom.createdAt)!!,
                 updatedAt = tuple.get(chatRoom.updatedAt)!!,
-                participantUsers = tuple.get(groupConcat)!!
+                participantUsers = userInfos
             )
         }
         logger.info { "$results" }

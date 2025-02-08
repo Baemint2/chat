@@ -6,15 +6,14 @@ import java.time.LocalDateTime
 
 @Entity
 class User(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    var id: Long? = null,
     @Column(unique = true) var username: String,
     var password: String,
     var nickname: String? = null,
 ) {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    var id: Long? = null
-
     @OneToMany(mappedBy = "user")
     val chatMessage: MutableList<ChatMessage> = mutableListOf()
 

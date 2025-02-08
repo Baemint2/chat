@@ -20,9 +20,8 @@ class ChatMessageRepositoryTest(
 
     @Test
     fun 채팅메시지전송() {
-        val testUser = User("testUser", "1234", "테스트유저").apply {
-            id = 3L
-        }
+        val testUser = User(id = 3L,"testUser", "1234", "테스트유저")
+
         val testChatRoom = ChatRoom("테스트채팅방").apply {
             id = 7L
         }

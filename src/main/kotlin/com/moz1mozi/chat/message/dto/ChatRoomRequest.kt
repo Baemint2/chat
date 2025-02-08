@@ -4,8 +4,10 @@ import com.moz1mozi.chat.entity.ChatRoom
 
 class ChatRoomRequest(
     private val chatRoomTitle: String? = null,
-    var creator: String? = null
+    var creator: String? = null,
+    val usernameList: MutableList<String> = mutableListOf()
 ) {
+
     companion object {
         fun of(chatRoom: ChatRoom): ChatRoomRequest {
             return ChatRoomRequest(chatRoom.chatRoomTitle, chatRoom.creator)

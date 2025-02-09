@@ -1,5 +1,6 @@
 package com.moz1mozi.chat.message
 
+import com.moz1mozi.chat.entity.ChatMessage
 import com.moz1mozi.chat.entity.ChatRoom
 import com.moz1mozi.chat.entity.ChatRoomMng
 import com.moz1mozi.chat.entity.ChatUserPK
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 class ChatRoomService(
     private val chatRoomMngRepository: ChatRoomMngRepository,
     private val chatRoomRepository: ChatRoomRepository,
+    private val chatMessageService: ChatMessageQueryService,
     private val userService: UserService,
 ) {
 
@@ -37,19 +39,14 @@ class ChatRoomService(
         return ChatRoomResponse.from(savedChatRoom)
     }
 
-    @Transactional
-    fun createChatRoomMng(username: String, chatRoomId: Long): ChatRoomMng {
-        val findUser = userService.findUser(username);
-        val findChatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow()
-        val chatUserPK = ChatUserPK(chatRoom = findChatRoom, user = findUser!!.toEntity())
-        val chatRoomMng = ChatRoomMng(chatUserPK)
-        return chatRoomMngRepository.save(chatRoomMng)
-    }
-
     // 채팅방 상세 조회
     @Transactional
     fun findChatRoomByUsername(username: String): List<ChatRoomSearchResponse> {
         val selectChatRoom = chatRoomRepository.selectChatRoom(username)
+        selectChatRoom.map { chatRoom ->
+            val findLatelyMessage = chatMessageService.findLatelyMessage(chatRoom.chatRoomId)
+            chatRoom.latelyMessage = findLatelyMessage?.msgContent
+        }
         return selectChatRoom
     }
 
@@ -58,5 +55,10 @@ class ChatRoomService(
     fun findChatRoom(chatRoomId: Long): ChatRoom {
         val findById = chatRoomRepository.findById(chatRoomId).orElseThrow()
         return findById
+    }
+
+    // 채팅방 접속시간 업데이트
+    fun updateEntryDt(chatRoomNo: Long, userNo:Long) {
+        chatRoomMngRepository.updateEntryDt(chatRoomNo, userNo)
     }
 }

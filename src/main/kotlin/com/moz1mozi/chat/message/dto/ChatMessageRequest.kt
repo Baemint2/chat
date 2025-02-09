@@ -6,8 +6,8 @@ import com.moz1mozi.chat.entity.User
 
 class ChatMessageRequest(
    val userId: Long,
-   val creator: String,
-   val msgContent: String,
+   val creator: String?,
+   val msgContent: String?,
    val chatRoomNo: Long,
 ) {
 
@@ -18,7 +18,6 @@ class ChatMessageRequest(
             msgContent = msgContent,
         )
     }
-
 
     override fun toString(): String {
         return "ChatMessageRequest(userId=$userId, creator='$creator', msgContent='$msgContent', chatRoomNo=$chatRoomNo)"

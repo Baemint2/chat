@@ -1,5 +1,7 @@
 package com.moz1mozi.chat.message.repository.impl
 
+import com.moz1mozi.chat.entity.ChatMessage
+import com.moz1mozi.chat.entity.QChatMessage.chatMessage
 import com.moz1mozi.chat.entity.QChatRoom.chatRoom
 import com.moz1mozi.chat.entity.QChatRoomMng.chatRoomMng
 import com.moz1mozi.chat.entity.QUser.user

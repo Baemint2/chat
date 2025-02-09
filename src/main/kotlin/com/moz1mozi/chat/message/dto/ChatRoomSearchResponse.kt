@@ -10,6 +10,7 @@ class ChatRoomSearchResponse(
     val createdAt: LocalDateTime? = null,
     val updatedAt: LocalDateTime? = null,
     val participantUsers: List<UserInfo>,
+    var latelyMessage: String? = null,
 ) {
     override fun toString(): String {
         return "ChatRoomResponse(chatRoomId=$chatRoomId, chatRoomTitle='$chatRoomTitle', creator='$creator', createdAt=$createdAt, updatedAt=$updatedAt, participantUsers='$participantUsers')"

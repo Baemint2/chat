@@ -56,7 +56,7 @@ class ChatRoomServiceTest @Autowired constructor(
   chatRoom = ChatRoom(
    chatRoomTitle = "테스트 채팅방"
   ).apply {
-   creator = "testUser"
+   creator = "testUsername"
    id = 99L
   }
   chatRoom2 = ChatRoom(
@@ -78,7 +78,7 @@ class ChatRoomServiceTest @Autowired constructor(
   user2 = User(
    username = "testUsername2",
    password = passwordEncoder.encode("1234"),
-   nickname = "testNickname",
+   nickname = "testNickname2",
   ).apply { id = 100L }
 
   userResponse = UserResponse(
@@ -123,24 +123,17 @@ class ChatRoomServiceTest @Autowired constructor(
 @Test
 @DisplayName("채팅방을 생성한다.")
  fun 채팅방_생성() {
-  `when`(chatRoomRepository.save(any<ChatRoom>())).thenReturn(chatRoom)
-  val createChatRoom = chatRoomService.createChatRoom(ChatRoomRequest.of(chatRoom), "testUser", listOf("testUser", "testUser2"))
+ `when`(userRepository.findByUsername("testUsername")).thenReturn(user)
+ `when`(userService.findUserByNickname(anyString())).thenReturn(userResponse)
+
+ `when`(chatRoomRepository.save(any<ChatRoom>())).thenReturn(chatRoom)
+ `when`(chatRoomRepository.findById(anyLong())).thenReturn(Optional.of(chatRoom))
+ `when`(chatRoomMngRepository.save(any())).thenReturn(chatRoomMng)
+
+  val createChatRoom = chatRoomService.createChatRoom(ChatRoomRequest.of(chatRoom), anyString(), listOf("testNickname", "testNickname2"))
   assertEquals(chatRoom.id, createChatRoom.id)
   logger.info { "${createChatRoom.id}, ${createChatRoom.chatRoomTitle}, ${createChatRoom.creator}" }
 }
-
- @Test
- @DisplayName("채팅관리테이블의 데이터를 생성한다.")
- fun 채팅_관리_생성() {
-  `when`(userRepository.findByUsername("testUsername")).thenReturn(user)
-  `when`(chatRoomRepository.findById(anyLong())).thenReturn(Optional.of(chatRoom))
-  `when`(userService.findUser(anyString())).thenReturn(userResponse)
-  `when`(chatRoomMngRepository.save(any())).thenReturn(chatRoomMng)
-
-  val findUser = userService.findUser(user.username)
-  val createChatRoomMng = chatRoomService.createChatRoomMng(findUser!!.username, anyLong())
-  logger.info{"createChatRoomMng: ${createChatRoomMng.chatUserPk.user.id}, ${createChatRoomMng.chatUserPk.chatRoom.id}, ${createChatRoomMng.entryStat}"}
- }
 
  @Test
  @DisplayName("특정 유저의 활성화된 채팅방 목록을 조회한다.")

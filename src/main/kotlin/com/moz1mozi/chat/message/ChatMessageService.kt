@@ -24,7 +24,7 @@ class ChatMessageService(
     @Transactional
     fun saveMessage(chatMessageRequest: ChatMessageRequest): CompletableFuture<ChatMessageResponse> {
         // 🔹 이미 영속 상태인 엔터티 가져오기
-        val findUser = userService.findUser(chatMessageRequest.creator)
+        val findUser = chatMessageRequest.creator?.let { userService.findUser(it) }
             ?: throw IllegalArgumentException("User not found: ${chatMessageRequest.creator}")
 
         val findChatRoom = chatRoomService.findChatRoom(chatMessageRequest.chatRoomNo)
@@ -38,15 +38,17 @@ class ChatMessageService(
 
         val savedMessage = chatMessageRepository.save(chatMessage)
 
-        logger.info { "채팅 메시지 저장 완료: ${savedMessage.msgContent}" }
+        logger.info { "채팅 메시지 저장 완료: ${savedMessage.id}" }
 
         return CompletableFuture.completedFuture(ChatMessageResponse.from(savedMessage))
     }
 
     @Transactional
-    fun getMessage(chatRoomNo: Long): List<ChatMessageResponse> {
+    fun getMessage(chatRoomNo: Long, userNo: Long): List<ChatMessageResponse> {
         val chatMessages = chatMessageRepository.findAllByChatRoomId(chatRoomNo)
+        chatRoomService.updateEntryDt(chatRoomNo, userNo)
         return chatMessages.map { ChatMessageResponse.from(it) }
     }
+
 
 }

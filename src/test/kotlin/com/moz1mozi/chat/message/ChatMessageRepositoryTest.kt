@@ -32,4 +32,10 @@ class ChatMessageRepositoryTest(
         chatMessageRepository.save(chatMessage);
         logger.info { "테스트 메시지: ${chatMessage.msgContent}, ${chatMessage.chatRoom.id}, ${chatMessage.user.id}, ${chatMessage.msgDt}, ${chatMessage.msgStat}" }
     }
+
+    @Test
+    fun 최신메시지조회() {
+        val selectLatelyMessage = chatMessageRepository.selectLatelyMessage(33L)
+        logger.info { "selectLatelyMessage: $selectLatelyMessage" }
+    }
 }

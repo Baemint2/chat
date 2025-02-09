@@ -1,6 +1,7 @@
 package com.moz1mozi.chat.message
 
 import com.moz1mozi.chat.message.dto.ChatMessageRequest
+import com.moz1mozi.chat.message.dto.ChatMessageResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.messaging.simp.SimpMessageSendingOperations
@@ -9,9 +10,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class KafkaConsumer(
-    private val chatMessageService: ChatMessageService
-) {
+    private val chatMessageService: ChatMessageService,
     private val messagingTemplate: SimpMessageSendingOperations? = null
+) {
 
     private val logger = KotlinLogging.logger {}
 
@@ -24,10 +25,15 @@ class KafkaConsumer(
             logger.info{"Sending message ${chatMessage.toString()}"}
 
             chatMessageService.saveMessage(chatMessage)
-//            messagingTemplate?.convertAndSend(
-//                "/sub/chat/room/" + chatMessage.chatRoom.id,
-//                chatMessage
-//            ) // Websocket 구독자에게 채팅 메시지 Send
+            messagingTemplate?.convertAndSend(
+                "/sub/chat/room/" + chatMessage.chatRoomNo,
+                chatMessage
+            ) // Websocket 구독자에게 채팅 메시지 Send
+
+            messagingTemplate?.convertAndSend(
+                "/sub/chat/update",
+                chatMessage
+            )
         } catch (e: Exception) {
             logger.error(e.message)
         }

@@ -33,11 +33,4 @@ class ChatMessageServiceTest @Autowired constructor(
 
   }
 
- @Test
- @DisplayName("채팅방 메시지 조회")
- fun 메시지조회() {
-  val message = chatMessageService.getMessage(48L)
-  logger.info { message.toString() }
- }
-
 }

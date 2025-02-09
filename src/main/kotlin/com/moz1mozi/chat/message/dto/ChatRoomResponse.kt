@@ -1,8 +1,11 @@
 package com.moz1mozi.chat.message.dto
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.moz1mozi.chat.entity.ChatRoom
 
 class ChatRoomResponse(
+
+    @JsonProperty(value = "chatRoomId")
     val id: Long? = null,
     val chatRoomTitle: String? = null,
     val creator: String? = null,

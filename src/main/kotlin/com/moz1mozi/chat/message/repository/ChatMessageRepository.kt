@@ -4,7 +4,7 @@ import com.moz1mozi.chat.entity.ChatMessage
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
-interface ChatMessageRepository: JpaRepository<ChatMessage, Long> {
+interface ChatMessageRepository: JpaRepository<ChatMessage, Long>, ChatMessageCustomRepository {
     fun findAllByChatRoomId(chatRoomId: Long): List<ChatMessage>
 
     @Query("select c " +

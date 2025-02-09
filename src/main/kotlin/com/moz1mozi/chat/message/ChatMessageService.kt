@@ -3,6 +3,7 @@ package com.moz1mozi.chat.message
 import com.moz1mozi.chat.entity.ChatMessage
 import com.moz1mozi.chat.message.dto.ChatMessageRequest
 import com.moz1mozi.chat.message.dto.ChatMessageResponse
+import com.moz1mozi.chat.message.dto.UnreadMessageResponse
 import com.moz1mozi.chat.message.repository.ChatMessageRepository
 import com.moz1mozi.chat.user.UserService
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -48,6 +49,11 @@ class ChatMessageService(
         val chatMessages = chatMessageRepository.findAllByChatRoomId(chatRoomNo)
         chatRoomService.updateEntryDt(chatRoomNo, userNo)
         return chatMessages.map { ChatMessageResponse.from(it) }
+    }
+
+    @Transactional
+    fun getUnreadMessages(userId: Long): List<UnreadMessageResponse> {
+        return chatMessageRepository.selectUnreadMessages(userId)
     }
 
 

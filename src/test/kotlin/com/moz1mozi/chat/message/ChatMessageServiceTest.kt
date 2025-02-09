@@ -29,8 +29,12 @@ class ChatMessageServiceTest @Autowired constructor(
    val saveMessage = chatMessageService.saveMessage(chatMessageRequest)
 
    saveMessage.join();
-
-
   }
+
+ @Test
+ fun 안읽은메시지조회() {
+  val unreadMessages = chatMessageService.getUnreadMessages(17L)
+  unreadMessages.forEach { logger.info { it } }
+ }
 
 }

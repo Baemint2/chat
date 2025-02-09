@@ -2,21 +2,31 @@ package com.moz1mozi.chat.message
 
 import com.moz1mozi.chat.entity.ChatMessage
 import com.moz1mozi.chat.entity.ChatRoom
+import com.moz1mozi.chat.entity.QChatMessage.chatMessage
+import com.moz1mozi.chat.entity.QChatRoomMng
+import com.moz1mozi.chat.entity.QChatRoomMng.chatRoomMng
+import com.moz1mozi.chat.entity.Status
 import com.moz1mozi.chat.entity.User
 import com.moz1mozi.chat.message.repository.ChatMessageRepository
+import com.querydsl.jpa.JPAExpressions
+import com.querydsl.jpa.impl.JPAQueryFactory
 import io.github.oshai.kotlinlogging.KotlinLogging
+import jakarta.persistence.EntityManager
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import java.time.LocalDateTime
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ChatMessageRepositoryTest(
     @Autowired val chatMessageRepository: ChatMessageRepository,
+    @Autowired private val em: EntityManager
 ) {
 
     private val logger = KotlinLogging.logger {}
+    private val queryFactory: JPAQueryFactory = JPAQueryFactory(em);
 
     @Test
     fun 채팅메시지전송() {
@@ -38,4 +48,25 @@ class ChatMessageRepositoryTest(
         val selectLatelyMessage = chatMessageRepository.selectLatelyMessage(33L)
         logger.info { "selectLatelyMessage: $selectLatelyMessage" }
     }
+
+    @Test
+    fun 안읽은메시지조회() {
+        val fetch = queryFactory
+            .select(
+                chatRoomMng.chatUserPk.chatRoom.id,
+                chatRoomMng.chatUserPk.user.id,
+                chatMessage.id.count().`as`("unreadCount")
+            )
+            .from(chatRoomMng)
+            .join(chatMessage)
+            .on(chatRoomMng.chatUserPk.chatRoom.id.eq(chatMessage.chatRoom.id))
+            .where(chatRoomMng.chatUserPk.user.id.eq(17L))
+            .where(chatRoomMng.entryDt.before(LocalDateTime.now()))
+            .where(chatRoomMng.entryStat.eq(Status.ENABLED))
+            .groupBy(chatRoomMng.chatUserPk.chatRoom.id)
+            .fetch()
+//        logger.info { "selectUnreadMessages: $selectUnreadMessages" }
+
+    }
+
 }

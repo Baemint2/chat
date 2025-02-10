@@ -1,6 +1,5 @@
 package com.moz1mozi.chat.message
 
-import com.moz1mozi.chat.entity.ChatMessage
 import com.moz1mozi.chat.entity.ChatRoom
 import com.moz1mozi.chat.entity.ChatRoomMng
 import com.moz1mozi.chat.entity.ChatUserPK
@@ -58,7 +57,13 @@ class ChatRoomService(
     }
 
     // 채팅방 접속시간 업데이트
+    @Transactional
     fun updateEntryDt(chatRoomNo: Long, userNo:Long) {
         chatRoomMngRepository.updateEntryDt(chatRoomNo, userNo)
+    }
+
+    @Transactional
+    fun getParticipants(chatRoomId: Long): List<Long> {
+        return chatRoomMngRepository.findParticipants(chatRoomId)
     }
 }

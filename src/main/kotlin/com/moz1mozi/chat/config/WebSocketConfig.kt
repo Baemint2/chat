@@ -18,7 +18,8 @@ class WebSocketConfig: WebSocketMessageBrokerConfigurer{
     }
 
     override fun configureMessageBroker(registry: MessageBrokerRegistry) {
-        registry.enableSimpleBroker("/sub")
+        registry.enableSimpleBroker("/sub", "/queue")
         registry.setApplicationDestinationPrefixes("/pub")
+        registry.setUserDestinationPrefix("/user")
     }
 }

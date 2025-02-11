@@ -1,12 +1,10 @@
 package com.moz1mozi.chat.message
 
 import com.moz1mozi.chat.message.dto.AccessDtUpdateRequest
-import com.moz1mozi.chat.message.dto.ChatMessageRequest
 import com.moz1mozi.chat.message.dto.ChatRoomRequest
 import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.ResponseEntity
-import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Controller
@@ -18,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody
 @Controller
 class ChatRoomController(
     private val chatRoomService: ChatRoomService,
-    private val chatMessageService: ChatMessageService,
-    private val kafkaTemplate: KafkaTemplate<String, ChatMessageRequest>? = null
 
 ) {
 

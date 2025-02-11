@@ -2,15 +2,21 @@ package com.moz1mozi.chat.message
 
 import com.moz1mozi.chat.message.dto.ChatMessageRequest
 import com.moz1mozi.chat.message.dto.ChatMessageResponse
-import com.moz1mozi.chat.message.dto.UnreadMessageResponse
+import com.moz1mozi.chat.user.UserService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.ResponseEntity
+import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.messaging.simp.SimpMessagingTemplate
+import org.springframework.messaging.simp.annotation.SendToUser
 import org.springframework.web.bind.annotation.*
+import java.security.Principal
 
 @RestController
 @RequestMapping("/message")
 class ChatMessageController(
-    private val chatMessageService: ChatMessageService
+    private val chatMessageService: ChatMessageService,
+    private val userService: UserService,
+    private val messagingTemplate: SimpMessagingTemplate,
 ) {
 
     val logger = KotlinLogging.logger {}
@@ -22,9 +28,14 @@ class ChatMessageController(
         return ResponseEntity.ok().body(mapOf("message" to message))
     }
 
-    @GetMapping("/unread")
-    fun unreadMessages(@RequestParam userId: Long): ResponseEntity<Map<String, List<UnreadMessageResponse>>> {
-        val unreadMessages = chatMessageService.getUnreadMessages(userId)
-        return ResponseEntity.ok().body(mapOf("unread" to unreadMessages))
+    @MessageMapping("/unread")
+    @SendToUser("/queue/unreadCount")
+    fun unreadMessages(principal: Principal) {
+
+        val findUser = userService.findUser(principal.name)
+        val unreadMessages = chatMessageService.getUnreadMessages(findUser?.id!!)
+        logger.info { "안읽은 메시지 ${unreadMessages.toString()}" }
+        messagingTemplate.convertAndSendToUser(principal.name, "/queue/unreadCount", unreadMessages)
+
     }
 }

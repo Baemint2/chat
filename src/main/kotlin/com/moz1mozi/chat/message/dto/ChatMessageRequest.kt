@@ -9,7 +9,6 @@ class ChatMessageRequest(
    val creator: String?,
    val msgContent: String?,
    val chatRoomNo: Long,
-   val unreadCount: Long?,
 ) {
 
     fun toEntity(user: User, chatRoom: ChatRoom): ChatMessage {
@@ -19,9 +18,8 @@ class ChatMessageRequest(
             msgContent = msgContent,
         )
     }
-
     override fun toString(): String {
-        return "ChatMessageRequest(userId=$userId, creator=$creator, msgContent=$msgContent, chatRoomNo=$chatRoomNo, unreadCount=$unreadCount)"
+        return "ChatMessageRequest(userId=$userId, creator=$creator, msgContent=$msgContent, chatRoomNo=$chatRoomNo)"
     }
 
 

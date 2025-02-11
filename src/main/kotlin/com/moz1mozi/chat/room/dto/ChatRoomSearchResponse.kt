@@ -1,4 +1,4 @@
-package com.moz1mozi.chat.message.dto
+package com.moz1mozi.chat.room.dto
 
 import com.moz1mozi.chat.user.dto.UserInfo
 import java.time.LocalDateTime

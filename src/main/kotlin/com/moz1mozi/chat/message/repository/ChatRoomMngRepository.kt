@@ -14,4 +14,9 @@ interface ChatRoomMngRepository: JpaRepository<ChatRoomMng, Long> {
             " and chatUserPk.user.id = :userId")
     fun updateEntryDt(chatRoomId: Long, userId: Long): Int
 
+    @Query("SELECT crm.chatUserPk.user.id " +
+            "FROM ChatRoomMng crm " +
+            "WHERE crm.chatUserPk.chatRoom.id = :chatRoomId")
+    fun findParticipants(chatRoomId: Long): List<Long>
+
 }

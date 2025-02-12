@@ -1,4 +1,4 @@
-package com.moz1mozi.chat.message.repository
+package com.moz1mozi.chat.room.repository
 
 import com.moz1mozi.chat.entity.ChatRoom
 import org.springframework.data.jpa.repository.JpaRepository

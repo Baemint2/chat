@@ -1,10 +1,11 @@
-package com.moz1mozi.chat.message
+package com.moz1mozi.chat.message.service
 
 import com.moz1mozi.chat.entity.ChatMessage
 import com.moz1mozi.chat.message.dto.ChatMessageRequest
 import com.moz1mozi.chat.message.dto.ChatMessageResponse
 import com.moz1mozi.chat.message.dto.UnreadMessageResponse
 import com.moz1mozi.chat.message.repository.ChatMessageRepository
+import com.moz1mozi.chat.room.service.ChatRoomService
 import com.moz1mozi.chat.user.UserService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.scheduling.annotation.Async

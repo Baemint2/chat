@@ -1,6 +1,6 @@
-package com.moz1mozi.chat.message.repository
+package com.moz1mozi.chat.room.repository
 
-import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
+import com.moz1mozi.chat.room.dto.ChatRoomSearchResponse
 
 interface ChatRoomCustomRepository {
 

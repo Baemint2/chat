@@ -2,11 +2,12 @@ package com.moz1mozi.chat.message
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.moz1mozi.chat.entity.ChatRoom
-import com.moz1mozi.chat.message.dto.ChatRoomRequest
-import com.moz1mozi.chat.message.dto.ChatRoomResponse
-import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
-import com.moz1mozi.chat.message.repository.ChatRoomMngRepository
-import com.moz1mozi.chat.message.repository.ChatRoomRepository
+import com.moz1mozi.chat.room.dto.ChatRoomRequest
+import com.moz1mozi.chat.room.dto.ChatRoomResponse
+import com.moz1mozi.chat.room.dto.ChatRoomSearchResponse
+import com.moz1mozi.chat.room.repository.ChatRoomMngRepository
+import com.moz1mozi.chat.room.repository.ChatRoomRepository
+import com.moz1mozi.chat.room.service.ChatRoomService
 import com.moz1mozi.chat.user.UserService
 import com.moz1mozi.chat.user.dto.UserInfo
 import com.moz1mozi.chat.user.repository.UserRepository

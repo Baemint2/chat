@@ -1,4 +1,4 @@
-package com.moz1mozi.chat.message.dto
+package com.moz1mozi.chat.room.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.moz1mozi.chat.entity.ChatRoom

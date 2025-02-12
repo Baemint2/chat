@@ -1,7 +1,7 @@
 package com.moz1mozi.chat.message
 
 import com.moz1mozi.chat.message.dto.ChatMessageRequest
-import com.moz1mozi.chat.message.dto.ChatMessageResponse
+import com.moz1mozi.chat.message.service.ChatMessageService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.messaging.simp.SimpMessageSendingOperations

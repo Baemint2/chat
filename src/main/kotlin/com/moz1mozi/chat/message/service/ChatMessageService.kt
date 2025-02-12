@@ -22,13 +22,12 @@ class ChatMessageService(
 
     val logger = KotlinLogging.logger {}
 
-    @Async
     @Transactional
     fun saveMessage(chatMessageRequest: ChatMessageRequest): CompletableFuture<ChatMessageResponse> {
         val findUser = chatMessageRequest.creator?.let { userService.findUser(it) }
             ?: throw IllegalArgumentException("User not found: ${chatMessageRequest.creator}")
 
-        val findChatRoom = chatRoomService.findChatRoom(chatMessageRequest.chatRoomNo)
+        val findChatRoom = chatRoomService.findChatRoom(chatMessageRequest.chatRoomId)
 
         val chatMessage = ChatMessage(
             msgContent = chatMessageRequest.msgContent,
@@ -46,6 +45,7 @@ class ChatMessageService(
     @Transactional
     fun getMessage(chatRoomNo: Long, userNo: Long): List<ChatMessageResponse> {
         val chatMessages = chatMessageRepository.findAllByChatRoomId(chatRoomNo)
+        logger.info { "chatMessages $chatMessages" }
         chatRoomService.updateEntryDt(chatRoomNo, userNo)
         return chatMessages.map { ChatMessageResponse.from(it) }
     }

@@ -1,6 +1,5 @@
 package com.moz1mozi.chat.config
 
-import com.moz1mozi.chat.interceptor.StompAuthInterceptor
 import com.sun.security.auth.UserPrincipal
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.server.ServerHttpRequest
@@ -16,7 +15,6 @@ import java.security.Principal
 @Configuration
 @EnableWebSocketMessageBroker
 class WebSocketConfig(
-    private val stompAuthInterceptor: StompAuthInterceptor
 ): WebSocketMessageBrokerConfigurer{
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {

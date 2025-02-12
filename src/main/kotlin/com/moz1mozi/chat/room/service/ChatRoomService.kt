@@ -10,6 +10,7 @@ import com.moz1mozi.chat.room.dto.ChatRoomSearchResponse
 import com.moz1mozi.chat.room.repository.ChatRoomMngRepository
 import com.moz1mozi.chat.room.repository.ChatRoomRepository
 import com.moz1mozi.chat.user.UserService
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -20,6 +21,7 @@ class ChatRoomService(
     private val chatMessageService: ChatMessageQueryService,
     private val userService: UserService,
 ) {
+    private val logger = KotlinLogging.logger {}
 
     // 채팅방 생성
     @Transactional
@@ -36,7 +38,7 @@ class ChatRoomService(
 
         chatRoomMngRepository.saveAll(chatRoomMngList)
 
-        return ChatRoomResponse.from(savedChatRoom)
+        return ChatRoomResponse.Companion.from(savedChatRoom)
     }
 
     // 로그인한 유저의 채팅방 목록 조회
@@ -65,7 +67,7 @@ class ChatRoomService(
 
     // 채팅방에 접속해있는 유저들의 리스트를 채팅방 별로 조회한다.
     @Transactional
-    fun getParticipants(chatRoomId: Long): List<Long> {
+    fun getParticipants(chatRoomId: Long): List<String> {
         return chatRoomMngRepository.findParticipants(chatRoomId)
     }
 }

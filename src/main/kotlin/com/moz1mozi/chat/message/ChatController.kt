@@ -15,7 +15,6 @@ class ChatController(
 
     @MessageMapping("/chat/message") // ✅ 웹에서 "/pub/chat/message"로 메시지 전송
     fun message(message: ChatMessageRequest) {
-        println("Received Message: " + message.msgContent)
         kafkaTemplate!!.send("chat-messages", message)
     }
 

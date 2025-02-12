@@ -28,18 +28,17 @@ class ChatMessageController(
     @PostMapping("/get")
     fun getMessages(@RequestBody chatMessageRequest: ChatMessageRequest): ResponseEntity<Map<String, List<ChatMessageResponse>>> {
 
-        val message = chatMessageService.getMessage(chatMessageRequest.chatRoomNo, chatMessageRequest.userId)
+        val message = chatMessageService.getMessage(chatMessageRequest.chatRoomId, chatMessageRequest.userId)
         return ResponseEntity.ok().body(mapOf("message" to message))
     }
 
     @MessageMapping("/unread")
-    @SendToUser("/queue/unreadCount")
     fun unreadMessages(principal: Principal) {
 
         val findUser = userService.findUser(principal.name)
         val unreadMessages = chatMessageService.getUnreadMessages(findUser?.id!!)
         logger.info { "안읽은 메시지 ${unreadMessages.toString()}" }
-        messagingTemplate.convertAndSendToUser(principal.name, "/queue/unreadCount", unreadMessages)
+        messagingTemplate.convertAndSend("/queue/unreadCount/${principal.name}", unreadMessages)
 
     }
 }

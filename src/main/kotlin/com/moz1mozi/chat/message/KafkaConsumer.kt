@@ -2,6 +2,7 @@ package com.moz1mozi.chat.message
 
 import com.moz1mozi.chat.message.dto.ChatMessageRequest
 import com.moz1mozi.chat.message.service.ChatMessageService
+import com.moz1mozi.chat.room.service.ChatRoomService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.messaging.simp.SimpMessageSendingOperations
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service
 @Service
 class KafkaConsumer(
     private val chatMessageService: ChatMessageService,
+    private val chatRoomService: ChatRoomService,
     private val messagingTemplate: SimpMessageSendingOperations? = null
 ) {
 
@@ -23,17 +25,22 @@ class KafkaConsumer(
     fun sendMessage(chatMessage: ChatMessageRequest) {
         try {
             logger.info{"Sending message ${chatMessage.toString()}"}
-
             chatMessageService.saveMessage(chatMessage)
             messagingTemplate?.convertAndSend(
-                "/sub/chat/room/" + chatMessage.chatRoomNo,
-                chatMessage
-            ) // Websocket 구독자에게 채팅 메시지 Send
-
-            messagingTemplate?.convertAndSend(
-                "/sub/chat/update",
+                "/sub/chat/room/" + chatMessage.chatRoomId,
                 chatMessage
             )
+
+            val participants = chatRoomService.getParticipants(chatMessage.chatRoomId)
+
+                participants.forEach { user ->
+                    val findChatRoomByUsername = chatRoomService.findChatRoomByUsername(user)
+                    logger.info { "유저 ${user}에게 채팅방 목록 업데이트 전송" }
+                    messagingTemplate?.convertAndSend(
+                        "/sub/chat/update/$user",
+                        findChatRoomByUsername
+                    )
+                }
         } catch (e: Exception) {
             logger.error(e.message)
         }

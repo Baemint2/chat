@@ -1,4 +1,4 @@
-package com.moz1mozi.chat.message
+package com.moz1mozi.chat.message.service
 
 import com.moz1mozi.chat.entity.ChatMessage
 import com.moz1mozi.chat.message.repository.ChatMessageRepository

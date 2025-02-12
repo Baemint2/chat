@@ -1,14 +1,16 @@
-package com.moz1mozi.chat.message
+package com.moz1mozi.chat.room.service
 
 import com.moz1mozi.chat.entity.ChatRoom
 import com.moz1mozi.chat.entity.ChatRoomMng
 import com.moz1mozi.chat.entity.ChatUserPK
-import com.moz1mozi.chat.message.dto.ChatRoomRequest
-import com.moz1mozi.chat.message.dto.ChatRoomResponse
-import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
-import com.moz1mozi.chat.message.repository.ChatRoomMngRepository
-import com.moz1mozi.chat.message.repository.ChatRoomRepository
+import com.moz1mozi.chat.message.service.ChatMessageQueryService
+import com.moz1mozi.chat.room.dto.ChatRoomRequest
+import com.moz1mozi.chat.room.dto.ChatRoomResponse
+import com.moz1mozi.chat.room.dto.ChatRoomSearchResponse
+import com.moz1mozi.chat.room.repository.ChatRoomMngRepository
+import com.moz1mozi.chat.room.repository.ChatRoomRepository
 import com.moz1mozi.chat.user.UserService
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -19,6 +21,7 @@ class ChatRoomService(
     private val chatMessageService: ChatMessageQueryService,
     private val userService: UserService,
 ) {
+    private val logger = KotlinLogging.logger {}
 
     // 채팅방 생성
     @Transactional
@@ -35,7 +38,7 @@ class ChatRoomService(
 
         chatRoomMngRepository.saveAll(chatRoomMngList)
 
-        return ChatRoomResponse.from(savedChatRoom)
+        return ChatRoomResponse.Companion.from(savedChatRoom)
     }
 
     // 채팅방 상세 조회
@@ -63,7 +66,7 @@ class ChatRoomService(
     }
 
     @Transactional
-    fun getParticipants(chatRoomId: Long): List<Long> {
+    fun getParticipants(chatRoomId: Long): List<String> {
         return chatRoomMngRepository.findParticipants(chatRoomId)
     }
 }

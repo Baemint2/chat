@@ -1,10 +1,11 @@
-package com.moz1mozi.chat.message
+package com.moz1mozi.chat.message.service
 
 import com.moz1mozi.chat.entity.ChatMessage
 import com.moz1mozi.chat.message.dto.ChatMessageRequest
 import com.moz1mozi.chat.message.dto.ChatMessageResponse
 import com.moz1mozi.chat.message.dto.UnreadMessageResponse
 import com.moz1mozi.chat.message.repository.ChatMessageRepository
+import com.moz1mozi.chat.room.service.ChatRoomService
 import com.moz1mozi.chat.user.UserService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.scheduling.annotation.Async
@@ -21,14 +22,13 @@ class ChatMessageService(
 
     val logger = KotlinLogging.logger {}
 
-    @Async
     @Transactional
     fun saveMessage(chatMessageRequest: ChatMessageRequest): CompletableFuture<ChatMessageResponse> {
         // 🔹 이미 영속 상태인 엔터티 가져오기
         val findUser = chatMessageRequest.creator?.let { userService.findUser(it) }
             ?: throw IllegalArgumentException("User not found: ${chatMessageRequest.creator}")
 
-        val findChatRoom = chatRoomService.findChatRoom(chatMessageRequest.chatRoomNo)
+        val findChatRoom = chatRoomService.findChatRoom(chatMessageRequest.chatRoomId)
 
         // 🔹 `findChatRoom`을 영속 상태로 사용 (toEntity() 제거)
         val chatMessage = ChatMessage(
@@ -47,6 +47,7 @@ class ChatMessageService(
     @Transactional
     fun getMessage(chatRoomNo: Long, userNo: Long): List<ChatMessageResponse> {
         val chatMessages = chatMessageRepository.findAllByChatRoomId(chatRoomNo)
+        logger.info { "chatMessages $chatMessages" }
         chatRoomService.updateEntryDt(chatRoomNo, userNo)
         return chatMessages.map { ChatMessageResponse.from(it) }
     }

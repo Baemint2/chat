@@ -29,7 +29,7 @@ class ChatMessageCustomRepositoryImpl(
             .from(chatRoomMng)
             .join(chatMessage)
             .on(chatRoomMng.chatUserPk.chatRoom.id.eq(chatMessage.chatRoom.id))
-            .where(chatRoomMng.chatUserPk.user.id.eq(17L))
+            .where(chatRoomMng.chatUserPk.user.id.eq(userId))
             .where(chatRoomMng.entryDt.before(LocalDateTime.now()))
             .where(chatMessage.msgDt.gt(chatRoomMng.entryDt))
             .where(chatRoomMng.entryStat.eq(Status.ENABLED))

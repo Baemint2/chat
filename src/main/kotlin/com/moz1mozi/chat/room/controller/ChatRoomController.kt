@@ -1,8 +1,9 @@
-package com.moz1mozi.chat.message
+package com.moz1mozi.chat.room.controller
 
-import com.moz1mozi.chat.message.dto.AccessDtUpdateRequest
-import com.moz1mozi.chat.message.dto.ChatRoomRequest
-import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
+import com.moz1mozi.chat.room.dto.AccessDtUpdateRequest
+import com.moz1mozi.chat.room.dto.ChatRoomRequest
+import com.moz1mozi.chat.room.dto.ChatRoomSearchResponse
+import com.moz1mozi.chat.room.service.ChatRoomService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.handler.annotation.MessageMapping
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody
 class ChatRoomController(
     private val chatRoomService: ChatRoomService,
 
-) {
+    ) {
 
     private val logger = KotlinLogging.logger { }
 

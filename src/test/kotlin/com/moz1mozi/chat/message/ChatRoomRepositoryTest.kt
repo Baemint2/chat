@@ -5,9 +5,9 @@ import com.moz1mozi.chat.entity.QChatRoom.chatRoom
 import com.moz1mozi.chat.entity.QChatRoomMng.chatRoomMng
 import com.moz1mozi.chat.entity.QUser.user
 import com.moz1mozi.chat.entity.Status
-import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
-import com.moz1mozi.chat.message.repository.ChatRoomMngRepository
-import com.moz1mozi.chat.message.repository.ChatRoomRepository
+import com.moz1mozi.chat.room.dto.ChatRoomSearchResponse
+import com.moz1mozi.chat.room.repository.ChatRoomMngRepository
+import com.moz1mozi.chat.room.repository.ChatRoomRepository
 import com.moz1mozi.chat.user.dto.UserInfo
 import com.moz1mozi.chat.user.repository.UserRepository
 import com.querydsl.core.types.dsl.Expressions

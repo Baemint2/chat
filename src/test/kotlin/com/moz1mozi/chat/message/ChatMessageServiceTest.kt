@@ -1,6 +1,8 @@
 package com.moz1mozi.chat.message
 
 import com.moz1mozi.chat.message.dto.ChatMessageRequest
+import com.moz1mozi.chat.message.service.ChatMessageService
+import com.moz1mozi.chat.room.service.ChatRoomService
 import com.moz1mozi.chat.user.UserService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.junit.jupiter.api.DisplayName

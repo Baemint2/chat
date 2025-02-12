@@ -1,4 +1,4 @@
-package com.moz1mozi.chat.message.repository
+package com.moz1mozi.chat.room.repository
 
 import com.moz1mozi.chat.entity.ChatRoomMng
 import org.springframework.data.jpa.repository.JpaRepository
@@ -14,9 +14,9 @@ interface ChatRoomMngRepository: JpaRepository<ChatRoomMng, Long> {
             " and chatUserPk.user.id = :userId")
     fun updateEntryDt(chatRoomId: Long, userId: Long): Int
 
-    @Query("SELECT crm.chatUserPk.user.id " +
+    @Query("SELECT crm.chatUserPk.user.username " +
             "FROM ChatRoomMng crm " +
             "WHERE crm.chatUserPk.chatRoom.id = :chatRoomId")
-    fun findParticipants(chatRoomId: Long): List<Long>
+    fun findParticipants(chatRoomId: Long): List<String>
 
 }

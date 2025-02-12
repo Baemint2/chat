@@ -1,4 +1,4 @@
-package com.moz1mozi.chat.message.dto
+package com.moz1mozi.chat.room.dto
 
 import com.moz1mozi.chat.user.dto.UserInfo
 import java.time.LocalDateTime
@@ -12,7 +12,8 @@ class ChatRoomSearchResponse(
     val participantUsers: List<UserInfo>,
     var latelyMessage: String? = null,
 ) {
+
     override fun toString(): String {
-        return "ChatRoomResponse(chatRoomId=$chatRoomId, chatRoomTitle='$chatRoomTitle', creator='$creator', createdAt=$createdAt, updatedAt=$updatedAt, participantUsers='$participantUsers')"
+        return "ChatRoomSearchResponse(chatRoomId=$chatRoomId, chatRoomTitle=$chatRoomTitle, creator=$creator, createdAt=$createdAt, updatedAt=$updatedAt, participantUsers=$participantUsers, latelyMessage=$latelyMessage)"
     }
 }

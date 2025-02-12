@@ -1,4 +1,4 @@
-package com.moz1mozi.chat.message.dto
+package com.moz1mozi.chat.room.dto
 
 class AccessDtUpdateRequest(
     var userId: Long,

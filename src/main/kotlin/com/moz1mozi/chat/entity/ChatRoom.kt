@@ -4,6 +4,10 @@ import jakarta.persistence.*
 
 @Entity
 class ChatRoom(
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "chat_room_id")
+    var id: Long? = null,
+
     // 채팅방 제목
     var chatRoomTitle: String? = null,
 
@@ -18,9 +22,4 @@ class ChatRoom(
     val chatRoomMng: MutableList<ChatRoomMng> = mutableListOf()
 
 ): BaseEntity() {
-
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chat_room_id")
-    var id: Long? = null
-
 }

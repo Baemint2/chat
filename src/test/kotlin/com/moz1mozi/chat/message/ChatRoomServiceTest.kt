@@ -4,10 +4,11 @@ import com.moz1mozi.chat.entity.ChatRoom
 import com.moz1mozi.chat.entity.ChatRoomMng
 import com.moz1mozi.chat.entity.ChatUserPK
 import com.moz1mozi.chat.entity.User
-import com.moz1mozi.chat.message.dto.ChatRoomRequest
-import com.moz1mozi.chat.message.dto.ChatRoomSearchResponse
-import com.moz1mozi.chat.message.repository.ChatRoomMngRepository
-import com.moz1mozi.chat.message.repository.ChatRoomRepository
+import com.moz1mozi.chat.room.dto.ChatRoomRequest
+import com.moz1mozi.chat.room.dto.ChatRoomSearchResponse
+import com.moz1mozi.chat.room.repository.ChatRoomMngRepository
+import com.moz1mozi.chat.room.repository.ChatRoomRepository
+import com.moz1mozi.chat.room.service.ChatRoomService
 import com.moz1mozi.chat.user.UserService
 import com.moz1mozi.chat.user.dto.UserInfo
 import com.moz1mozi.chat.user.dto.UserResponse

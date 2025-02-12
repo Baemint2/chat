@@ -12,5 +12,5 @@ interface ChatMessageRepository: JpaRepository<ChatMessage, Long>, ChatMessageCu
             "where c.chatRoom.id = :chatRoomId " +
             "order by c.msgDt desc " +
             "limit 1")
-    fun selectLatelyMessage(chatRoomId: Long): ChatMessage?
+    fun selectLatelyMessage(chatRoomId: Long?): ChatMessage?
 }

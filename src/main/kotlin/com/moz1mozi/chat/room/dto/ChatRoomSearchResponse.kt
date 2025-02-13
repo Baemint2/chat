@@ -11,6 +11,7 @@ class ChatRoomSearchResponse(
     val updatedAt: LocalDateTime? = null,
     val participantUsers: List<UserInfo>,
     var latelyMessage: String? = null,
+    var unreadCount: Long? = 0,
 ) {
 
     override fun toString(): String {

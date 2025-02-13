@@ -31,8 +31,8 @@ class KafkaConsumer(
                 chatMessage
             )
 
-            val participants = chatRoomService.getParticipants(chatMessage.chatRoomId)
-
+            // 채팅방에 속해있는 참가자들 조회
+            val participants = chatRoomService.getParticipants(chatMessage.chatRoomId);
                 participants.forEach { user ->
                     val findChatRoomByUsername = chatRoomService.findChatRoomByUsername(user)
                     logger.info { "유저 ${user}에게 채팅방 목록 업데이트 전송" }

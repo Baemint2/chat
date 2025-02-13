@@ -38,16 +38,19 @@ class ChatRoomService(
 
         chatRoomMngRepository.saveAll(chatRoomMngList)
 
-        return ChatRoomResponse.Companion.from(savedChatRoom)
+        return ChatRoomResponse.from(savedChatRoom)
     }
 
     // 로그인한 유저의 채팅방 목록 조회
     @Transactional
     fun findChatRoomByUsername(username: String): List<ChatRoomSearchResponse> {
         val selectChatRoom = chatRoomRepository.selectChatRoom(username)
+        val findUser = userService.findUser(username)
         selectChatRoom.map { chatRoom ->
             val findLatelyMessage = chatMessageService.findLatelyMessage(chatRoom.chatRoomId)
+            val unreadMessage = chatMessageService.getUnreadMessage(chatRoom.chatRoomId, findUser?.id!!)
             chatRoom.latelyMessage = findLatelyMessage?.msgContent
+            chatRoom.unreadCount = unreadMessage?.unreadCount
         }
         return selectChatRoom
     }

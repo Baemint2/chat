@@ -1,9 +1,9 @@
 package com.moz1mozi.chat.message
 
-import com.moz1mozi.chat.entity.ChatRoom
-import com.moz1mozi.chat.entity.ChatRoomMng
-import com.moz1mozi.chat.entity.ChatUserPK
-import com.moz1mozi.chat.entity.User
+import com.moz1mozi.chat.entity.*
+import com.moz1mozi.chat.message.dto.UnreadMessageResponse
+import com.moz1mozi.chat.message.service.ChatMessageQueryService
+import com.moz1mozi.chat.message.service.ChatMessageService
 import com.moz1mozi.chat.room.dto.ChatRoomRequest
 import com.moz1mozi.chat.room.dto.ChatRoomSearchResponse
 import com.moz1mozi.chat.room.repository.ChatRoomMngRepository
@@ -33,6 +33,7 @@ class ChatRoomServiceTest @Autowired constructor(
  @MockitoBean val chatRoomRepository: ChatRoomRepository,
  @MockitoBean val userRepository: UserRepository,
  @MockitoBean val userService: UserService,
+ @MockitoBean val chatMessageService: ChatMessageQueryService,
  @MockitoBean val chatRoomMngRepository: ChatRoomMngRepository,
  val passwordEncoder: PasswordEncoder,
  ) {
@@ -83,7 +84,7 @@ class ChatRoomServiceTest @Autowired constructor(
   ).apply { id = 100L }
 
   userResponse = UserResponse(
-      id = null,
+      id = 7L,
       username = "testUsername",
       password = passwordEncoder.encode("1234"),
       nickname = "testNickname",
@@ -129,9 +130,16 @@ class ChatRoomServiceTest @Autowired constructor(
 
  `when`(chatRoomRepository.save(any<ChatRoom>())).thenReturn(chatRoom)
  `when`(chatRoomRepository.findById(anyLong())).thenReturn(Optional.of(chatRoom))
- `when`(chatRoomMngRepository.save(any())).thenReturn(chatRoomMng)
+ val chatUserPK1 = ChatUserPK(chatRoom = chatRoom, user = userResponse.toEntity())
+ val chatUserPK2 = ChatUserPK(chatRoom = chatRoom, user = userResponse2.toEntity())
+ val chatRoomMng1 = ChatRoomMng(chatUserPK1)
+ val chatRoomMng2 = ChatRoomMng(chatUserPK2)
+
+ `when`(chatRoomMngRepository.saveAll(anyList())).thenReturn(listOf(chatRoomMng1, chatRoomMng2))
+
 
   val createChatRoom = chatRoomService.createChatRoom(ChatRoomRequest.of(chatRoom), anyString(), listOf("testNickname", "testNickname2"))
+
   assertEquals(chatRoom.id, createChatRoom.id)
   logger.info { "${createChatRoom.id}, ${createChatRoom.chatRoomTitle}, ${createChatRoom.creator}" }
 }
@@ -141,6 +149,8 @@ class ChatRoomServiceTest @Autowired constructor(
  fun 채팅방_목록_조회() {
   `when`(userRepository.findByUsername("testUsername")).thenReturn(user)
   `when`(chatRoomRepository.selectChatRoom("testUsername")).thenReturn(chatRoomSearchRespons)
+  `when`(chatMessageService.findLatelyMessage(chatRoom.id!!)).thenReturn(ChatMessage("안녕하세요?", chatRoom, user))
+  `when`(chatMessageService.getUnreadMessage(anyLong(), anyLong())).thenReturn(UnreadMessageResponse(chatRoomId = 17L, userId = userResponse.id!!, unreadCount = 1))
   `when`(userService.findUser(anyString())).thenReturn(userResponse)
   val chatRooms = chatRoomService.findChatRoomByUsername("testUsername")
 

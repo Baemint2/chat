@@ -1,5 +1,6 @@
-package com.moz1mozi.chat.room.repository.Impl
+package com.moz1mozi.chat.room.repository.impl
 
+import com.moz1mozi.chat.entity.QChatMessage.chatMessage
 import com.moz1mozi.chat.entity.QChatRoom.chatRoom
 import com.moz1mozi.chat.entity.QChatRoomMng.chatRoomMng
 import com.moz1mozi.chat.entity.QUser.user
@@ -7,18 +8,19 @@ import com.moz1mozi.chat.entity.Status
 import com.moz1mozi.chat.room.dto.ChatRoomSearchResponse
 import com.moz1mozi.chat.room.repository.ChatRoomCustomRepository
 import com.moz1mozi.chat.user.dto.UserInfo
-import com.querydsl.jpa.impl.JPAQueryFactory
-import jakarta.persistence.EntityManager
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.JPAExpressions
+import com.querydsl.jpa.impl.JPAQueryFactory
+import jakarta.persistence.EntityManager
 
 class ChatRoomCustomRepositoryImpl (
     entityManager: EntityManager
 ): ChatRoomCustomRepository {
     private val queryFactory: JPAQueryFactory = JPAQueryFactory(entityManager)
+
     override fun selectChatRoom(username: String): List<ChatRoomSearchResponse> {
         val groupConcat = Expressions.stringTemplate(
-            "GROUP_CONCAT({0})", user.username
+            "GROUP_CONCAT(distinct {0})", user.username
         )
 
         val subQuery = JPAExpressions
@@ -28,21 +30,27 @@ class ChatRoomCustomRepositoryImpl (
             .where(user.username.eq(username), chatRoomMng.entryStat.eq(Status.ENABLED))
 
         val results = queryFactory
-            .select(chatRoom.id,
+            .select(
+                chatRoom.id,
                 chatRoom.chatRoomTitle,
                 chatRoom.creator,
                 chatRoom.createdAt,
                 chatRoom.updatedAt,
+                Expressions.`as`(Expressions.constant(chatMessage.msgDt.max()), "latest_message_dt"),
                 groupConcat)
             .from(chatRoom)
             .join(chatRoomMng)
             .on(chatRoom.id.eq(chatRoomMng.chatUserPk.chatRoom.id))
             .join(user)
             .on(chatRoomMng.chatUserPk.user.id.eq(user.id))
-            .where(chatRoomMng.entryStat.eq(Status.ENABLED)
-                 , chatRoom.chatRoomStat.eq(Status.ENABLED)
-                 , chatRoom.id.`in`(subQuery))
+            .join(chatMessage)
+            .on(chatRoom.id.eq(chatMessage.chatRoom.id))
+            .where(
+                chatRoomMng.entryStat.eq(Status.ENABLED)
+                , chatRoom.chatRoomStat.eq(Status.ENABLED)
+                , chatRoom.id.`in`(subQuery))
             .groupBy(chatRoom.id)
+            .orderBy(chatMessage.msgDt.max().desc())
             .fetch()
         return results.map { tuple ->
             val usernames = tuple.get(groupConcat)?.split(",") ?: emptyList()
@@ -66,7 +74,7 @@ class ChatRoomCustomRepositoryImpl (
                 creator = tuple.get(chatRoom.creator),
                 createdAt = tuple.get(chatRoom.createdAt)!!,
                 updatedAt = tuple.get(chatRoom.updatedAt),
-                participantUsers = userInfos
+                participantUsers = userInfos,
             )
         }
     }

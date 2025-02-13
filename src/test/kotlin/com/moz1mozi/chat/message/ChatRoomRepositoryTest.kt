@@ -42,7 +42,9 @@ class ChatRoomRepositoryTest(
             creator = "testUsername"
         }
 
-        logger.info { "채팅방 생성: ${chatRoom.id}, ${chatRoom.chatRoomTitle}, ${chatRoom.chatRoomStat}, ${chatRoom.creator}, ${chatRoom.chatRoomMng}" }
+        val findChatRoom = chatRoomRepository.save(chatRoom)
+
+        logger.info { "채팅방 생성: ${findChatRoom.id}, ${findChatRoom.chatRoomTitle}, ${findChatRoom.chatRoomStat}, ${findChatRoom.creator}, ${findChatRoom.chatRoomMng}" }
     }
 
     @Test
@@ -93,7 +95,7 @@ class ChatRoomRepositoryTest(
 
             ChatRoomSearchResponse(
                 chatRoomId = tuple.get(chatRoom.id)!!,
-                chatRoomTitle = tuple.get(chatRoom.chatRoomTitle)!!,
+                chatRoomTitle = tuple.get(chatRoom.chatRoomTitle) ?: "Unknown",
                 creator = tuple.get(chatRoom.creator)!!,
                 createdAt = tuple.get(chatRoom.createdAt)!!,
                 updatedAt = tuple.get(chatRoom.updatedAt)!!,

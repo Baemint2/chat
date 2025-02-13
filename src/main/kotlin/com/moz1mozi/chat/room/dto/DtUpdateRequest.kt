@@ -1,6 +1,6 @@
 package com.moz1mozi.chat.room.dto
 
-class AccessDtUpdateRequest(
+class DtUpdateRequest(
     var userId: Long,
     var chatRoomId: Long,
 ) {

@@ -55,6 +55,21 @@ class ChatRoomService(
         return selectChatRoom
     }
 
+    @Transactional
+    fun findChatRoomByUsername(username: String, sender: String, senderChatRoomId: Long): List<ChatRoomSearchResponse> {
+        val selectChatRoom = chatRoomRepository.selectChatRoom(username)
+        val findUser = userService.findUser(username)
+        selectChatRoom.map { chatRoom ->
+            val findLatelyMessage = chatMessageService.findLatelyMessage(chatRoom.chatRoomId)
+            chatRoom.latelyMessage = findLatelyMessage?.msgContent
+            if (!(username == sender && chatRoom.chatRoomId == senderChatRoomId)) {
+                val unreadMessage = chatMessageService.getUnreadMessage(chatRoom.chatRoomId, findUser?.id!!)
+                chatRoom.unreadCount = unreadMessage?.unreadCount
+            }
+        }
+        return selectChatRoom
+    }
+
     // 채팅방 접속
     @Transactional
     fun findChatRoom(chatRoomId: Long): ChatRoom {
@@ -64,9 +79,16 @@ class ChatRoomService(
 
     // 채팅방 접속시간 업데이트
     @Transactional
-    fun updateEntryDt(chatRoomNo: Long, userNo:Long) {
-        chatRoomMngRepository.updateEntryDt(chatRoomNo, userNo)
+    fun updateEntryDt(chatRoomId: Long, userId:Long) {
+        chatRoomMngRepository.updateEntryDt(chatRoomId, userId)
     }
+
+    // 채팅방 마지막 접속시간 업데이트
+    @Transactional
+    fun updateLastSeenDt(chatRoomId: Long, userId:Long) {
+        chatRoomMngRepository.updateLastSeenDt(chatRoomId, userId)
+    }
+
 
     // 채팅방에 접속해있는 유저들의 리스트를 채팅방 별로 조회한다.
     @Transactional

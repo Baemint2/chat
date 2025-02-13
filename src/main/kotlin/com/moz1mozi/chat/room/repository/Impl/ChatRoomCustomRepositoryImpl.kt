@@ -47,8 +47,8 @@ class ChatRoomCustomRepositoryImpl (
             .on(chatRoom.id.eq(chatMessage.chatRoom.id))
             .where(
                 chatRoomMng.entryStat.eq(Status.ENABLED)
-                 , chatRoom.chatRoomStat.eq(Status.ENABLED)
-                 , chatRoom.id.`in`(subQuery))
+                , chatRoom.chatRoomStat.eq(Status.ENABLED)
+                , chatRoom.id.`in`(subQuery))
             .groupBy(chatRoom.id)
             .orderBy(chatMessage.msgDt.max().desc())
             .fetch()

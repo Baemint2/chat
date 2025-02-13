@@ -1,6 +1,7 @@
 package com.moz1mozi.chat.message.service
 
 import com.moz1mozi.chat.entity.ChatMessage
+import com.moz1mozi.chat.message.dto.UnreadMessageResponse
 import com.moz1mozi.chat.message.repository.ChatMessageRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -14,5 +15,10 @@ class ChatMessageQueryService(
     @Transactional
     fun findLatelyMessage(chatRoomId: Long): ChatMessage? {
         return chatMessageRepository.selectLatelyMessage(chatRoomId)
+    }
+
+    @Transactional
+    fun getUnreadMessage(chatRoomId: Long, userId: Long): UnreadMessageResponse? {
+        return chatMessageRepository.selectUnreadMessage(chatRoomId, userId)
     }
 }

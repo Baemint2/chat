@@ -1,20 +1,20 @@
 package com.moz1mozi.chat.message
 
 import com.moz1mozi.chat.message.dto.ChatMessageRequest
+import com.moz1mozi.chat.message.dto.UnreadMessageResponse
 import com.moz1mozi.chat.message.service.ChatMessageService
-import com.moz1mozi.chat.room.service.ChatRoomService
-import com.moz1mozi.chat.user.UserService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.junit.jupiter.api.DisplayName
+import org.mockito.Mockito.anyLong
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import kotlin.test.Test
 
 @SpringBootTest
 class ChatMessageServiceTest @Autowired constructor(
- val chatMessageService: ChatMessageService,
- val chatRoomService: ChatRoomService,
- val userService: UserService,
+ @MockitoBean val chatMessageService: ChatMessageService,
 ) {
 
  val logger = KotlinLogging.logger {}
@@ -26,7 +26,7 @@ class ChatMessageServiceTest @Autowired constructor(
    userId = 17L,
    creator = "moz1mozi",
    msgContent = "123",
-   chatRoomNo = 48L
+   chatRoomId = 48L
   )
    val saveMessage = chatMessageService.saveMessage(chatMessageRequest)
 
@@ -35,6 +35,10 @@ class ChatMessageServiceTest @Autowired constructor(
 
  @Test
  fun 안읽은메시지조회() {
+  val unread1 = UnreadMessageResponse(chatRoomId = 7L, userId = 17L, unreadCount = 0)
+  val unread2 = UnreadMessageResponse(chatRoomId = 7L, userId = 17L, unreadCount = 5)
+  val unreadMessageList = listOf(unread1, unread2)
+  `when`(chatMessageService.getUnreadMessages(anyLong())).thenReturn(unreadMessageList);
   val unreadMessages = chatMessageService.getUnreadMessages(17L)
   unreadMessages.forEach { logger.info { it } }
  }

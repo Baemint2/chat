@@ -38,21 +38,24 @@ class ChatRoomService(
 
         chatRoomMngRepository.saveAll(chatRoomMngList)
 
-        return ChatRoomResponse.Companion.from(savedChatRoom)
+        return ChatRoomResponse.from(savedChatRoom)
     }
 
-    // 채팅방 상세 조회
+    // 로그인한 유저의 채팅방 목록 조회
     @Transactional
     fun findChatRoomByUsername(username: String): List<ChatRoomSearchResponse> {
         val selectChatRoom = chatRoomRepository.selectChatRoom(username)
+        val findUser = userService.findUser(username)
         selectChatRoom.map { chatRoom ->
             val findLatelyMessage = chatMessageService.findLatelyMessage(chatRoom.chatRoomId)
+            val unreadMessage = chatMessageService.getUnreadMessage(chatRoom.chatRoomId, findUser?.id!!)
             chatRoom.latelyMessage = findLatelyMessage?.msgContent
+            chatRoom.unreadCount = unreadMessage?.unreadCount
         }
         return selectChatRoom
     }
 
-    // 채팅방 조회
+    // 채팅방 접속
     @Transactional
     fun findChatRoom(chatRoomId: Long): ChatRoom {
         val findById = chatRoomRepository.findById(chatRoomId).orElseThrow()
@@ -65,6 +68,7 @@ class ChatRoomService(
         chatRoomMngRepository.updateEntryDt(chatRoomNo, userNo)
     }
 
+    // 채팅방에 접속해있는 유저들의 리스트를 채팅방 별로 조회한다.
     @Transactional
     fun getParticipants(chatRoomId: Long): List<String> {
         return chatRoomMngRepository.findParticipants(chatRoomId)

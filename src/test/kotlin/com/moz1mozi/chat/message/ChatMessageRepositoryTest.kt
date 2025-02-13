@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import java.time.LocalDateTime
+import java.util.*
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -30,11 +31,13 @@ class ChatMessageRepositoryTest(
 
     @Test
     fun 채팅메시지전송() {
-        val testUser = User(id = 3L,"testUser", "1234", "테스트유저")
+        val testUser = User(id = null, UUID.randomUUID().toString(), "1234", "테스트유저")
 
-        val testChatRoom = ChatRoom("테스트채팅방").apply {
-            id = 7L
-        }
+        val testChatRoom = ChatRoom(id = null, "테스트채팅방")
+
+        em.persist(testUser)
+        em.persist(testChatRoom)
+        em.flush()
 
         val chatMessage = ChatMessage("안녕하세요?", testChatRoom, testUser).apply {
             creator = testUser.username;

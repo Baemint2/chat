@@ -1,6 +1,6 @@
 package com.moz1mozi.chat.room.controller
 
-import com.moz1mozi.chat.room.dto.AccessDtUpdateRequest
+import com.moz1mozi.chat.room.dto.DtUpdateRequest
 import com.moz1mozi.chat.room.dto.ChatRoomRequest
 import com.moz1mozi.chat.room.dto.ChatRoomSearchResponse
 import com.moz1mozi.chat.room.service.ChatRoomService
@@ -39,8 +39,14 @@ class ChatRoomController(
     }
 
     @MessageMapping("/chat/access-update")
-    fun updateAccess(@Payload accessDtUpdateRequest: AccessDtUpdateRequest) {
-        logger.info{"Access update request: $accessDtUpdateRequest"}
-        chatRoomService.updateEntryDt(accessDtUpdateRequest.chatRoomId, accessDtUpdateRequest.userId)
+    fun updateAccess(@Payload dtUpdateRequest: DtUpdateRequest) {
+        logger.info{"Access update request: $dtUpdateRequest"}
+        chatRoomService.updateEntryDt(dtUpdateRequest.chatRoomId, dtUpdateRequest.userId)
+    }
+
+    @PostMapping("/chat/last-seen-update")
+    fun updateLastSeen(@RequestBody dtUpdateRequest: DtUpdateRequest) {
+        logger.info{"Last seen update request: $dtUpdateRequest"}
+        chatRoomService.updateLastSeenDt(dtUpdateRequest.chatRoomId, dtUpdateRequest.userId)
     }
 }

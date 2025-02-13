@@ -14,6 +14,13 @@ interface ChatRoomMngRepository: JpaRepository<ChatRoomMng, Long> {
             " and chatUserPk.user.id = :userId")
     fun updateEntryDt(chatRoomId: Long, userId: Long): Int
 
+    @Modifying
+    @Query("update ChatRoomMng " +
+            " set lastSeenDt = now()" +
+            " where chatUserPk.chatRoom.id = :chatRoomId " +
+            " and chatUserPk.user.id = :userId")
+    fun updateLastSeenDt(chatRoomId: Long, userId: Long): Int
+
     @Query("SELECT crm.chatUserPk.user.username " +
             "FROM ChatRoomMng crm " +
             "WHERE crm.chatUserPk.chatRoom.id = :chatRoomId")

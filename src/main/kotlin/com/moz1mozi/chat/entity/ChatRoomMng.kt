@@ -23,8 +23,8 @@ class ChatRoomMng(
     // 채팅방 접속시간
     var entryDt: LocalDateTime = LocalDateTime.now(),
 
-    // 채팅방 퇴장시간
-    var exitDt: LocalDateTime? = null,
+    // 채팅방 마지막 접속시간
+    var lastSeenDt: LocalDateTime? = null,
 
 ) {
 }

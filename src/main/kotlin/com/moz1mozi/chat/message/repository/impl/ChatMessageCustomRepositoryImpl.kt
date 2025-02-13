@@ -43,4 +43,34 @@ class ChatMessageCustomRepositoryImpl(
             )
         };
     }
+
+    override fun selectUnreadMessage(chatRoomId: Long, userId: Long): UnreadMessageResponse? {
+
+        val unreadCountExpression = Expressions.numberPath(Long::class.java, "unreadCount")
+
+        val result = queryFactory
+            .select(
+                chatRoomMng.chatUserPk.chatRoom.id,
+                chatRoomMng.chatUserPk.user.id,
+                chatMessage.count().`as`(unreadCountExpression)
+            )
+            .from(chatRoomMng)
+            .join(chatMessage)
+            .on(chatRoomMng.chatUserPk.chatRoom.id.eq(chatMessage.chatRoom.id))
+            .where(chatRoomMng.chatUserPk.chatRoom.id.eq(chatRoomId))
+            .where(chatRoomMng.chatUserPk.user.id.eq(userId))
+            .where(chatRoomMng.entryDt.before(LocalDateTime.now()))
+            .where(chatMessage.msgDt.gt(chatRoomMng.entryDt))
+            .where(chatRoomMng.entryStat.eq(Status.ENABLED))
+            .groupBy(chatRoomMng.chatUserPk.user.id)
+            .fetchOne()
+
+        return result?.let {
+            UnreadMessageResponse(
+                chatRoomId = it.get(chatRoomMng.chatUserPk.chatRoom.id)!!,
+                userId = it.get(chatRoomMng.chatUserPk.user.id)!!,
+                unreadCount = it.get(unreadCountExpression) ?: 0L
+            )
+        }
+    }
 }

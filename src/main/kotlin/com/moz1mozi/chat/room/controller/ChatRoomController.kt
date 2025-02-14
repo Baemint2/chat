@@ -11,14 +11,14 @@ import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.web.bind.annotation.*
 
 @RestController
+@RequestMapping("/chat-room")
 class ChatRoomController(
     private val chatRoomService: ChatRoomService,
-
     ) {
 
     private val logger = KotlinLogging.logger { }
 
-    @PostMapping("/chatRoom")
+    @PostMapping
     fun createChatRoom(@RequestBody chatRoom: ChatRoomRequest): ResponseEntity<Map<String, Any?>> {
         val createChatRoom = chatRoom.creator?.let {
             chatRoomService.createChatRoom(chatRoom,
@@ -28,7 +28,7 @@ class ChatRoomController(
     }
 
     // 현재 로그인한 유저가 속해있는 채팅방 조회
-    @GetMapping("/chatRoom/{username}")
+    @GetMapping("/{username}")
     fun getChatRoom(@PathVariable username: String): ResponseEntity<Map<String, List<ChatRoomSearchResponse>>> {
         val chatRoom = chatRoomService.findChatRoomByUsername(username)
         return ResponseEntity.ok().body(mapOf("chatRoom" to chatRoom))
@@ -40,9 +40,15 @@ class ChatRoomController(
         chatRoomService.updateEntryDt(dtUpdateRequest.chatRoomId, dtUpdateRequest.userId)
     }
 
-    @PostMapping("/chatRoom/last-seen-update")
+    @PostMapping("/last-seen-update")
     fun updateLastSeen(@RequestBody dtUpdateRequest: DtUpdateRequest) {
         logger.info{"Last seen update request: $dtUpdateRequest"}
         chatRoomService.updateLastSeenDt(dtUpdateRequest.chatRoomId, dtUpdateRequest.userId)
+    }
+
+    @PostMapping("/leave")
+    fun leaveChatRoom(@RequestBody dtUpdateRequest: DtUpdateRequest): ResponseEntity<Void> {
+        chatRoomService.updateEntryDt(dtUpdateRequest.chatRoomId, dtUpdateRequest.userId)
+        return ResponseEntity.noContent().build()
     }
 }

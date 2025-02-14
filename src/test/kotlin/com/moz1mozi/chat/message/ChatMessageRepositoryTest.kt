@@ -3,12 +3,10 @@ package com.moz1mozi.chat.message
 import com.moz1mozi.chat.entity.ChatMessage
 import com.moz1mozi.chat.entity.ChatRoom
 import com.moz1mozi.chat.entity.QChatMessage.chatMessage
-import com.moz1mozi.chat.entity.QChatRoomMng
 import com.moz1mozi.chat.entity.QChatRoomMng.chatRoomMng
 import com.moz1mozi.chat.entity.Status
 import com.moz1mozi.chat.entity.User
 import com.moz1mozi.chat.message.repository.ChatMessageRepository
-import com.querydsl.jpa.JPAExpressions
 import com.querydsl.jpa.impl.JPAQueryFactory
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.persistence.EntityManager

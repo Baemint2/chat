@@ -1,20 +1,16 @@
 package com.moz1mozi.chat.room.controller
 
-import com.moz1mozi.chat.room.dto.DtUpdateRequest
 import com.moz1mozi.chat.room.dto.ChatRoomRequest
 import com.moz1mozi.chat.room.dto.ChatRoomSearchResponse
+import com.moz1mozi.chat.room.dto.DtUpdateRequest
 import com.moz1mozi.chat.room.service.ChatRoomService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.Payload
-import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.*
 
-@Controller
+@RestController
 class ChatRoomController(
     private val chatRoomService: ChatRoomService,
 
@@ -44,7 +40,7 @@ class ChatRoomController(
         chatRoomService.updateEntryDt(dtUpdateRequest.chatRoomId, dtUpdateRequest.userId)
     }
 
-    @PostMapping("/chat/last-seen-update")
+    @PostMapping("/chatRoom/last-seen-update")
     fun updateLastSeen(@RequestBody dtUpdateRequest: DtUpdateRequest) {
         logger.info{"Last seen update request: $dtUpdateRequest"}
         chatRoomService.updateLastSeenDt(dtUpdateRequest.chatRoomId, dtUpdateRequest.userId)

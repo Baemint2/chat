@@ -3,6 +3,7 @@ package com.moz1mozi.chat.room.service
 import com.moz1mozi.chat.entity.ChatRoom
 import com.moz1mozi.chat.entity.ChatRoomMng
 import com.moz1mozi.chat.entity.ChatUserPK
+import com.moz1mozi.chat.entity.Status
 import com.moz1mozi.chat.message.service.ChatMessageQueryService
 import com.moz1mozi.chat.room.dto.ChatRoomRequest
 import com.moz1mozi.chat.room.dto.ChatRoomResponse
@@ -94,5 +95,10 @@ class ChatRoomService(
     @Transactional
     fun getParticipants(chatRoomId: Long): List<String> {
         return chatRoomMngRepository.findParticipants(chatRoomId)
+    }
+
+    @Transactional
+    fun updateEntryStat(chatRoomId: Long, userId: Long) {
+        return chatRoomMngRepository.updateEntryStat(chatRoomId, userId, Status.DISABLED)
     }
 }

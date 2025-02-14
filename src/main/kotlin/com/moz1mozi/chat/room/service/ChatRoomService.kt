@@ -46,29 +46,19 @@ class ChatRoomService(
     @Transactional
     fun findChatRoomByUsername(username: String): List<ChatRoomSearchResponse> {
         val selectChatRoom = chatRoomRepository.selectChatRoom(username)
-        val findUser = userService.findUser(username)
-        selectChatRoom.map { chatRoom ->
-            val findLatelyMessage = chatMessageService.findLatelyMessage(chatRoom.chatRoomId)
-            val unreadMessage = chatMessageService.getUnreadMessage(chatRoom.chatRoomId, findUser?.id!!)
-            chatRoom.latelyMessage = findLatelyMessage?.msgContent
-            chatRoom.unreadCount = unreadMessage?.unreadCount
-        }
         return selectChatRoom
     }
 
     @Transactional
     fun findChatRoomByUsername(username: String, sender: String, senderChatRoomId: Long): List<ChatRoomSearchResponse> {
-        val selectChatRoom = chatRoomRepository.selectChatRoom(username)
-        val findUser = userService.findUser(username)
-        selectChatRoom.map { chatRoom ->
-            val findLatelyMessage = chatMessageService.findLatelyMessage(chatRoom.chatRoomId)
-            chatRoom.latelyMessage = findLatelyMessage?.msgContent
-            if (!(username == sender && chatRoom.chatRoomId == senderChatRoomId)) {
-                val unreadMessage = chatMessageService.getUnreadMessage(chatRoom.chatRoomId, findUser?.id!!)
-                chatRoom.unreadCount = unreadMessage?.unreadCount
+        val chatRooms = chatRoomRepository.selectChatRoom(username)
+
+        return chatRooms.map { chatRoom ->
+            if (username == sender && chatRoom.chatRoomId == senderChatRoomId) {
+                chatRoom.unreadCount = 0
             }
+            chatRoom
         }
-        return selectChatRoom
     }
 
     // 채팅방 접속
@@ -90,13 +80,13 @@ class ChatRoomService(
         chatRoomMngRepository.updateLastSeenDt(chatRoomId, userId)
     }
 
-
     // 채팅방에 접속해있는 유저들의 리스트를 채팅방 별로 조회한다.
     @Transactional
     fun getParticipants(chatRoomId: Long): List<String> {
         return chatRoomMngRepository.findParticipants(chatRoomId)
     }
 
+    // 채팅방 나가기
     @Transactional
     fun updateEntryStat(chatRoomId: Long, userId: Long) {
         return chatRoomMngRepository.updateEntryStat(chatRoomId, userId, Status.DISABLED)

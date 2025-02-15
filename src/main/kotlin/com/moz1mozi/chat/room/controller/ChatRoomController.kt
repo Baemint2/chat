@@ -48,7 +48,7 @@ class ChatRoomController(
 
     @PostMapping("/leave")
     fun leaveChatRoom(@RequestBody dtUpdateRequest: DtUpdateRequest): ResponseEntity<Void> {
-        chatRoomService.updateEntryDt(dtUpdateRequest.chatRoomId, dtUpdateRequest.userId)
+        chatRoomService.updateEntryStat(dtUpdateRequest.chatRoomId, dtUpdateRequest.userId)
         return ResponseEntity.noContent().build()
     }
 }

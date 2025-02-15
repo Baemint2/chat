@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.data.domain.PageRequest
 import java.time.LocalDateTime
 import java.util.*
 
@@ -41,7 +42,7 @@ class ChatMessageRepositoryTest(
             creator = testUser.username;
         }
         chatMessageRepository.save(chatMessage);
-        logger.info { "테스트 메시지: ${chatMessage.msgContent}, ${chatMessage.chatRoom.id}, ${chatMessage.user.id}, ${chatMessage.msgDt}, ${chatMessage.msgStat}" }
+        logger.info { "테스트 메시지: ${chatMessage.msgContent}, ${chatMessage.chatRoom?.id}, ${chatMessage.user?.id}, ${chatMessage.msgDt}, ${chatMessage.msgStat}" }
     }
 
     @Test
@@ -67,6 +68,16 @@ class ChatMessageRepositoryTest(
             .groupBy(chatRoomMng.chatUserPk.chatRoom.id)
             .fetch()
 //        logger.info { "selectUnreadMessages: $selectUnreadMessages" }
+
+    }
+
+    @Test
+    fun 메시지_무한_스크롤() {
+        val pageable = PageRequest.of(0, 20)
+        val selectMessage = chatMessageRepository.selectMessage(48L, pageable)
+        selectMessage.forEach { message ->
+            logger.info { "message: ${message.toString()}" }
+        }
 
     }
 

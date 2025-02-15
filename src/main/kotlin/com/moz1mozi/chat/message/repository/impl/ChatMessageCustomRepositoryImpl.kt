@@ -1,5 +1,6 @@
 package com.moz1mozi.chat.message.repository.impl
 
+import com.moz1mozi.chat.entity.ChatMessage
 import com.moz1mozi.chat.entity.QChatMessage.chatMessage
 import com.moz1mozi.chat.entity.QChatRoomMng.chatRoomMng
 import com.moz1mozi.chat.entity.Status
@@ -8,7 +9,9 @@ import com.moz1mozi.chat.message.repository.ChatMessageCustomRepository
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager
-import java.time.LocalDateTime
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
+import org.springframework.data.domain.SliceImpl
 
 class ChatMessageCustomRepositoryImpl(
     entityManager: EntityManager
@@ -72,5 +75,25 @@ class ChatMessageCustomRepositoryImpl(
                 unreadCount = it.get(unreadCountExpression) ?: 0L
             )
         }
+    }
+
+    override fun selectMessage(
+        chatRoomId: Long,
+        pageable: Pageable
+    ): Slice<ChatMessage> {
+        val results = queryFactory
+            .select(chatMessage)
+            .from(chatMessage)
+            .where(chatMessage.chatRoom.id.eq(chatRoomId))
+            .offset(pageable.offset)
+            .limit(pageable.pageSize.toLong() + 1)
+            .orderBy(chatMessage.msgDt.desc())
+            .fetch()
+
+        val hasNext = results.size > pageable.pageSize
+
+        if (hasNext) results.removeAt(results.size - 1)
+
+        return SliceImpl(results, pageable, hasNext)
     }
 }

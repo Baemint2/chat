@@ -1,16 +1,16 @@
 package com.moz1mozi.chat.message.controller
 
-import com.moz1mozi.chat.message.dto.ChatMessageRequest
 import com.moz1mozi.chat.message.dto.ChatMessageResponse
 import com.moz1mozi.chat.message.service.ChatMessageService
 import com.moz1mozi.chat.user.UserService
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.springframework.http.ResponseEntity
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
+import org.springframework.data.web.PageableDefault
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
-import org.springframework.messaging.simp.annotation.SendToUser
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.security.Principal
@@ -25,11 +25,12 @@ class ChatMessageController(
 
     val logger = KotlinLogging.logger {}
 
-    @PostMapping("/get")
-    fun getMessages(@RequestBody chatMessageRequest: ChatMessageRequest): ResponseEntity<Map<String, List<ChatMessageResponse>>> {
+    @GetMapping("/get/{chatRoomId}")
+    fun getMessages(@PathVariable chatRoomId: Long,
+                    @PageableDefault(size = 20) pageable: Pageable
+    ): Slice<ChatMessageResponse> {
 
-        val message = chatMessageService.getMessage(chatMessageRequest.chatRoomId, chatMessageRequest.userId)
-        return ResponseEntity.ok().body(mapOf("message" to message))
+        return chatMessageService.getMessage(chatRoomId, pageable)
     }
 
     @MessageMapping("/unread")

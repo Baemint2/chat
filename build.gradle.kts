@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.testImplementation
+
 plugins {
 	id("org.jetbrains.kotlin.jvm") version "1.9.25"
 	id("org.jetbrains.kotlin.plugin.spring") version "1.9.25"
@@ -48,6 +50,8 @@ dependencies {
 	kapt("jakarta.persistence:jakarta.persistence-api")
 
 	implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
+
+	testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
 }
 
 kotlin {
@@ -80,6 +84,7 @@ noArg {
 	annotation("jakarta.persistence.Entity")
 	annotation("jakarta.persistence.MappedSuperclass")
 	annotation("jakarta.persistence.Embeddable")
+	invokeInitializers = true
 }
 
 tasks.test {

@@ -162,9 +162,14 @@ class ChatRoomServiceTest @Autowired constructor(
  @Test
  @DisplayName("채팅방을 나갑니다.")
  fun 채팅방_나감() {
-  `when`(chatRoomService.updateEntryStat(anyLong(), anyLong()))
-  chatRoomService.updateEntryStat(chatRoom.id!!, user.id!!)
+  `when`(chatRoomService.updateEntryStat(anyLong(), anyLong(), Status.DISABLED))
+  chatRoomService.updateEntryStat(chatRoom.id!!, user.id!!, Status.DISABLED)
 
+ }
+
+ @Test
+ fun 채팅방_초대() {
+  `when`(chatRoomService.inviteChatRoom(anyLong(), anyString())).thenReturn(null)
  }
 
 }

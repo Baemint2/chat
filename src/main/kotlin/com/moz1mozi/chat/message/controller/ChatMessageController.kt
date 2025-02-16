@@ -1,6 +1,7 @@
 package com.moz1mozi.chat.message.controller
 
 import com.moz1mozi.chat.message.dto.ChatMessageResponse
+import com.moz1mozi.chat.message.dto.MsgDeleteRequest
 import com.moz1mozi.chat.message.service.ChatMessageService
 import com.moz1mozi.chat.user.UserService
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.web.PageableDefault
 import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -40,6 +42,11 @@ class ChatMessageController(
         val unreadMessages = chatMessageService.getUnreadMessages(findUser?.id!!)
         logger.info { "안읽은 메시지 ${unreadMessages.toString()}" }
         messagingTemplate.convertAndSend("/queue/unreadCount/${principal.name}", unreadMessages)
+    }
 
+    @MessageMapping("/delete")
+    fun deleteMessage(@Payload msgDeleteRequest: MsgDeleteRequest) {
+        val updateMsgStat = chatMessageService.updateMsgStat(msgDeleteRequest.chatRoomId, msgDeleteRequest.userId, msgDeleteRequest.msgId)
+        messagingTemplate.convertAndSend("/sub/chat/${msgDeleteRequest.chatRoomId}/message", updateMsgStat)
     }
 }

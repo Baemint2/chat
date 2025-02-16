@@ -54,10 +54,10 @@ class ChatMessageServiceTest @Autowired constructor(
  fun 메시지조회() {
 
   val testMessages = listOf(
-   ChatMessageResponse(803L, 17L, 38L, "?", LocalDateTime.parse("2025-02-13T22:07:41.843584"), Status.ENABLED.ordinal),
-   ChatMessageResponse(802L, 17L, 38L, "하이", LocalDateTime.parse("2025-02-13T22:07:41.041260"), Status.ENABLED.ordinal),
-   ChatMessageResponse(801L, 17L, 38L, "하이", LocalDateTime.parse("2025-02-13T22:07:39.760071"), Status.ENABLED.ordinal),
-   ChatMessageResponse(798L, 17L, 38L, "아", LocalDateTime.parse("2025-02-13T22:07:29.449454"), Status.ENABLED.ordinal),
+   ChatMessageResponse(803L, 17L, 38L, "?", LocalDateTime.parse("2025-02-13T22:07:41.843584"), Status.ENABLED),
+   ChatMessageResponse(802L, 17L, 38L, "하이", LocalDateTime.parse("2025-02-13T22:07:41.041260"), Status.ENABLED),
+   ChatMessageResponse(801L, 17L, 38L, "하이", LocalDateTime.parse("2025-02-13T22:07:39.760071"), Status.ENABLED),
+   ChatMessageResponse(798L, 17L, 38L, "아", LocalDateTime.parse("2025-02-13T22:07:29.449454"), Status.ENABLED),
   )
 
   val pageable = PageRequest.of(0, 20)

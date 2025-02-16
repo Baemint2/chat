@@ -1,6 +1,7 @@
 package com.moz1mozi.chat.message.service
 
 import com.moz1mozi.chat.entity.ChatMessage
+import com.moz1mozi.chat.entity.Status
 import com.moz1mozi.chat.message.dto.ChatMessageRequest
 import com.moz1mozi.chat.message.dto.ChatMessageResponse
 import com.moz1mozi.chat.message.dto.UnreadMessageResponse
@@ -10,6 +11,7 @@ import com.moz1mozi.chat.user.UserService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
+import org.springframework.data.domain.SliceImpl
 import org.springframework.messaging.simp.SimpMessageSendingOperations
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -56,7 +58,10 @@ class ChatMessageService(
 
             // 채팅방에 속해있는 참가자들 조회
             val participants = chatRoomService.getParticipants(chatMessage.chatRoomId)
+
             participants.forEach { user ->
+                chatRoomService.updateEntryStat(chatMessage.chatRoomId, user, Status.ENABLED)
+
                 val findChatRoomByUsername =
                     chatRoomService.findChatRoomByUsername(user, chatMessage.creator!!, chatMessage.chatRoomId)
                 logger.info { "유저 ${user}에게 채팅방 목록 업데이트 전송" }
@@ -74,12 +79,20 @@ class ChatMessageService(
     fun getMessage(chatRoomNo: Long, pageable: Pageable): Slice<ChatMessageResponse> {
         val chatMessages = chatMessageRepository.selectMessage(chatRoomNo, pageable)
         logger.info { "chatMessages $chatMessages" }
-        return chatMessages.map { ChatMessageResponse.from(it) }
+        val sortedBy = chatMessages.content.sortedBy { it.msgDt }
+        return SliceImpl(sortedBy.map { ChatMessageResponse.from(it) }, pageable, chatMessages.hasNext())
     }
 
     @Transactional
     fun getUnreadMessages(userId: Long): List<UnreadMessageResponse> {
         return chatMessageRepository.selectUnreadMessages(userId)
+    }
+
+    @Transactional
+    fun updateMsgStat(chatRoomId: Long, userId: Long, msgId: Long): ChatMessageResponse {
+        val updateMsgStat = chatMessageRepository.updateMsgStat(chatRoomId, userId, msgId, Status.DISABLED)
+        val findById = chatMessageRepository.findById(msgId).get()
+        return ChatMessageResponse.from(findById)
     }
 
 

@@ -1,6 +1,7 @@
 package com.moz1mozi.chat.message.dto
 
 import com.moz1mozi.chat.entity.ChatMessage
+import com.moz1mozi.chat.entity.Status
 import java.time.LocalDateTime
 
 class ChatMessageResponse(
@@ -9,7 +10,7 @@ class ChatMessageResponse(
     val chatRoomNo: Long?,
     val msgContent: String?,
     val msgDt: LocalDateTime,
-    var msgStat: Int
+    var msgStat: Status
 ) {
     companion object {
         fun from(chatMessage: ChatMessage): ChatMessageResponse {
@@ -19,7 +20,7 @@ class ChatMessageResponse(
                 chatMessage.chatRoom.id,
                 chatMessage.msgContent,
                 chatMessage.msgDt,
-                chatMessage.msgStat!!.ordinal,
+                chatMessage.msgStat!!,
             )
         }
     }

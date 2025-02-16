@@ -20,6 +20,9 @@ class ChatRoomMng(
     @Enumerated(EnumType.STRING)
     var alarmStat: Status? = Status.ENABLED,
 
+    // 채팅방 초대 or 생성시간
+    var accessDt: LocalDateTime = LocalDateTime.now(),
+
     // 채팅방 접속시간
     var entryDt: LocalDateTime = LocalDateTime.now(),
 
@@ -27,4 +30,8 @@ class ChatRoomMng(
     var lastSeenDt: LocalDateTime? = null,
 
 ) {
+
+    override fun toString(): String {
+        return "ChatRoomMng(chatUserPk=$chatUserPk, entryStat=$entryStat, alarmStat=$alarmStat, accessDt=$accessDt, entryDt=$entryDt, lastSeenDt=$lastSeenDt)"
+    }
 }

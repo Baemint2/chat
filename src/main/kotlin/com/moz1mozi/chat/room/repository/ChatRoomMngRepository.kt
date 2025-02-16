@@ -37,6 +37,11 @@ interface ChatRoomMngRepository: JpaRepository<ChatRoomMng, ChatUserPK> {
     fun updateEntryStat(@Param("chatRoomId") chatRoomId: Long,
                         @Param("userId") userId: Long,
                         @Param("status") status: Status
-    )
+    ): Int
 
+    @Query("select exists (select 1" +
+            "  from ChatRoomMng crm" +
+            " where crm.chatUserPk.chatRoom.id = :chatRoomId" +
+            "   and crm.chatUserPk.user.id = :userId)")
+    fun existUser(chatRoomId: Long, userId: Long): Boolean
 }

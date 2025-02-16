@@ -1,5 +1,6 @@
 package com.moz1mozi.chat.room.controller
 
+import com.moz1mozi.chat.entity.Status
 import com.moz1mozi.chat.room.dto.ChatRoomRequest
 import com.moz1mozi.chat.room.dto.ChatRoomSearchResponse
 import com.moz1mozi.chat.room.dto.DtUpdateRequest
@@ -37,18 +38,18 @@ class ChatRoomController(
     @MessageMapping("/chat/access-update")
     fun updateAccess(@Payload dtUpdateRequest: DtUpdateRequest) {
         logger.info{"Access update request: $dtUpdateRequest"}
-        chatRoomService.updateEntryDt(dtUpdateRequest.chatRoomId, dtUpdateRequest.userId)
+        chatRoomService.updateEntryDt(dtUpdateRequest.chatRoomId, dtUpdateRequest.username)
     }
 
     @PostMapping("/last-seen-update")
     fun updateLastSeen(@RequestBody dtUpdateRequest: DtUpdateRequest) {
         logger.info{"Last seen update request: $dtUpdateRequest"}
-        chatRoomService.updateLastSeenDt(dtUpdateRequest.chatRoomId, dtUpdateRequest.userId)
+        chatRoomService.updateLastSeenDt(dtUpdateRequest.chatRoomId, dtUpdateRequest.username)
     }
 
     @PostMapping("/leave")
     fun leaveChatRoom(@RequestBody dtUpdateRequest: DtUpdateRequest): ResponseEntity<Void> {
-        chatRoomService.updateEntryStat(dtUpdateRequest.chatRoomId, dtUpdateRequest.userId)
+        chatRoomService.updateEntryStat(dtUpdateRequest.chatRoomId, dtUpdateRequest.username, Status.DISABLED)
         return ResponseEntity.noContent().build()
     }
 }

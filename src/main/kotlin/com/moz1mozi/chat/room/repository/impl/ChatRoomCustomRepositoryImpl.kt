@@ -28,6 +28,9 @@ class ChatRoomCustomRepositoryImpl (
             "GROUP_CONCAT(CONCAT({0}, ':', {1}))", participants.username, participants.nickname
         )
 
+        val userCount = Expressions.numberPath(Long::class.java, "userCount")
+
+
         val participants = JPAExpressions
             .select(groupConcatUserInfo)
             .from(participants)
@@ -37,6 +40,10 @@ class ChatRoomCustomRepositoryImpl (
                         .select(chatRoomMng.chatUserPk.user.id)
                         .from(chatRoomMng)
                         .where(chatRoomMng.chatUserPk.chatRoom.id.eq(chatRoom.id))
+                        .where((JPAExpressions.select(chatRoomMng.count().`as`(userCount))
+                            .from(chatRoomMng)
+                            .where(chatRoomMng.chatUserPk.chatRoom.id.eq(chatRoom.id))).lt(3)
+                        .or(chatRoomMng.entryStat.eq(Status.ENABLED)))
                 )
             )
 

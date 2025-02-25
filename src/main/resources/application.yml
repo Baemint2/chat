@@ -1,6 +1,9 @@
 spring:
   application:
      name: chat
+  config:
+    activate:
+      on-profile: local
   datasource:
     url: jdbc:mysql://localhost:3306/moz1mozi
     username: moz1mozi
@@ -25,3 +28,31 @@ logging:
     root: info
 server:
   port: 8090
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  datasource:
+    url: jdbc:h2:mem:~/chatApplication
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: chat-consumer-group
+    template:
+      default-topic: chat-messages
